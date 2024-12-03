@@ -1,0 +1,41 @@
+name: Wedding API deployment
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+
+      - name: Install Dependencies
+        run: |
+          composer install
+          cp .env.example .env
+          php artisan key:generate --ansi
+
+      - name: Deploy Laravel Project
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Deploy application files
+          sshpass -p 'SZ3bLYhBSC9scTp' rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ bintangtobing@153.92.5.213:/home/bintangtobing/wedding-api.bintangtobing.com/
+
+          # Update server
+          sshpass -p 'SZ3bLYhBSC9scTp' ssh -o StrictHostKeyChecking=no bintangtobing@153.92.5.213 'cd /home/bintangtobing/wedding-api.bintangtobing.com && php artisan config:cache && php artisan route:cache && php artisan view:cache'
+
+      - name: Set Permissions
+        run: |
+          sshpass -p 'SZ3bLYhBSC9scTp' ssh -o StrictHostKeyChecking=no bintangtobing@153.92.5.213 'find /home/bintangtobing/wedding-api.bintangtobing.com/storage/ -type d -exec chmod 775 {} \;'
+          sshpass -p 'SZ3bLYhBSC9scTp' ssh -o StrictHostKeyChecking=no bintangtobing@153.92.5.213 'find /home/bintangtobing/wedding-api.bintangtobing.com/bootstrap/cache/ -type d -exec chmod 775 {} \;'
