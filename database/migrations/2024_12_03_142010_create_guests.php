@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('profile_picture')->nullable();
             $table->text('comment')->nullable();
+            $table->foreignId('comment_id')->nullable()->constrained('guests')->onDelete('cascade');
             $table->timestamps();
         });
     }

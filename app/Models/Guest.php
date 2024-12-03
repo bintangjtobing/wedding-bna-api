@@ -10,8 +10,16 @@ class Guest extends Model
     use HasFactory;
 
     protected $fillable = ['name', 'slug_name', 'phone_number', 'email', 'profile_picture', 'comment'];
+    public function replies()
+    {
+        return $this->hasMany(Reply::class);
+    }
 
-    // Ensure the slug_name is always lowercase and hyphenated
+    // Relasi ke komentar tamu
+    public function comment()
+    {
+        return $this->belongsTo(Guest::class, 'comment_id');
+    }
     public static function boot()
     {
         parent::boot();

@@ -22,3 +22,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/invitation', [InvitationController::class, 'create']);
 Route::get('/invitation', [InvitationController::class, 'index']);
 Route::get('/invitation/{slug}', [InvitationController::class, 'show']);
+Route::post('/invitation/{slug}/reply', [InvitationController::class, 'replyToComment']);
