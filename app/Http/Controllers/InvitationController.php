@@ -17,17 +17,25 @@ class InvitationController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'phone_number' => 'required|string|max:15',
-            'email' => 'required|email|max:255|unique:users',
+            'email' => 'required|email|max:255|unique:guests',
             'profile_picture' => 'nullable|string|max:255',
             'comment' => 'nullable|string',
+            'specific_call' => 'nullable|in:mr,bang,kak,mas,mrs,ms',
+            'region' => 'nullable|string|max:255',
+            'gender' => 'nullable|in:male,female,other',
+            'friend_of' => 'nullable|in:Bintang,Ayu',
         ]);
-
+    
         $user = Guest::create([
             'name' => $request->name,
             'phone_number' => $request->phone_number,
             'email' => $request->email,
             'profile_picture' => $request->profile_picture,
             'comment' => $request->comment,
+            'specific_call' => $request->specific_call,
+            'region' => $request->region,
+            'gender' => $request->gender,
+            'friend_of' => $request->friend_of,
         ]);
 
         return response()->json($user, 201);
@@ -60,6 +68,7 @@ class InvitationController extends Controller
                 'slug_name' => $slug, // Kembalikan slug_name untuk reference
                 'profile_picture' => $randomProfilePicture, // Gambar profil acak
                 'comment' => null, // Null jika tidak ada komentar
+                'specific_call' => $user->specific_call,
             ]);
         }
 
@@ -89,32 +98,32 @@ class InvitationController extends Controller
         ], 201);
     }
     public function updateAttendance(Request $request, $slug)
-{
-    // Validasi input
-    $request->validate([
-        'attendance_name' => 'nullable|string|max:255',
-        'attendance_message' => 'nullable|string',
-        'attend' => 'required|boolean', // 1 untuk hadir, 0 untuk tidak hadir
-    ]);
+    {
+        // Validasi input
+        $request->validate([
+            'attendance_name' => 'nullable|string|max:255',
+            'attendance_message' => 'nullable|string',
+            'attend' => 'required|boolean', // 1 untuk hadir, 0 untuk tidak hadir
+        ]);
 
-    // Mencari guest berdasarkan slug
-    $guest = Guest::where('slug_name', $slug)->first();
+        // Mencari guest berdasarkan slug
+        $guest = Guest::where('slug_name', $slug)->first();
 
-    if (!$guest) {
-        return response()->json(['message' => 'Invitation not found'], 404);
+        if (!$guest) {
+            return response()->json(['message' => 'Invitation not found'], 404);
+        }
+
+        // Update data attendance
+        $guest->update([
+            'attendance_name' => $request->attendance_name,
+            'attendance_message' => $request->attendance_message,
+            'attend' => $request->attend, // 1 atau 0
+        ]);
+
+        return response()->json([
+            'message' => 'Attendance updated successfully',
+            'guest' => $guest
+        ]);
     }
-
-    // Update data attendance
-    $guest->update([
-        'attendance_name' => $request->attendance_name,
-        'attendance_message' => $request->attendance_message,
-        'attend' => $request->attend, // 1 atau 0
-    ]);
-
-    return response()->json([
-        'message' => 'Attendance updated successfully',
-        'guest' => $guest
-    ]);
-}
 
 }

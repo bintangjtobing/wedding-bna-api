@@ -9,9 +9,21 @@ class Guest extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug_name', 'phone_number', 'email', 'profile_picture', 'comment', 'attendance_name', // Kolom baru
+    protected $fillable = [
+        'name',
+        'slug_name',
+        'phone_number',
+        'email',
+        'profile_picture',
+        'comment',
+        'attendance_name', // Kolom baru
         'attendance_message', // Kolom baru
-        'attend'];
+        'attend',
+        'specific_call', // Kolom baru
+        'region',        // Kolom baru
+        'gender',        // Kolom baru
+        'friend_of'      // Kolom baru
+    ];
     public function replies()
     {
         return $this->hasMany(Reply::class);
