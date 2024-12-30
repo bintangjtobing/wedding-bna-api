@@ -68,7 +68,7 @@ class InvitationController extends Controller
                 'slug_name' => $slug, // Kembalikan slug_name untuk reference
                 'profile_picture' => $randomProfilePicture, // Gambar profil acak
                 'comment' => null, // Null jika tidak ada komentar
-                'specific_call' => $user->specific_call,
+                'specific_call' => $user->specific_call ?? 'Kak',
             ]);
         }
 
