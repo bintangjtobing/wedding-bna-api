@@ -43,7 +43,7 @@ Route::post('/send-invitations', function () {
         $message = "Halo {$specificCall} {$guest->name},\n\n";
         $message .= "Tanpa mengurangi rasa hormat, izinkan kami mengundang {$specificCall} {$guest->name} untuk menghadiri acara pernikahan kami.\n\n";
         $message .= "*Berikut link undangan kami*, untuk info lengkap dari acara bisa kunjungi:\n";
-        $message .= "https://wedding-bintang.baharihari.com/{$slug}\n\n";
+        $message .= "https://wedding-bintang.baharihari.com/mengundang/{$slug}\n\n";
         $message .= "Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk menyempatkan waktu hadir dan memberikan doa restu ke acara yang telah kami sediakan.\n\n";
         $message .= "*Mohon maaf perihal undangan hanya dibagikan melalui pesan Whatsapp.*\n\n";
         $message .= "Diharapkan untuk *tetap menjaga kesehatan bersama dan sangat besar harapan untuk datang pada jam yang telah disepakati.*\n\n";

@@ -19,8 +19,8 @@ use App\Http\Controllers\InvitationController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('/invitation', [InvitationController::class, 'create']);
-Route::get('/invitation', [InvitationController::class, 'index']);
-Route::get('/invitation/{slug}', [InvitationController::class, 'show']);
-Route::post('/invitation/{slug}/reply', [InvitationController::class, 'replyToComment']);
-Route::post('/invitation/{slug}/attendance', [InvitationController::class, 'updateAttendance']);
+Route::post('/mengundang', [InvitationController::class, 'create']);
+Route::get('/mengundang', [InvitationController::class, 'index']);
+Route::get('/mengundang/{slug}', [InvitationController::class, 'show']);
+Route::post('/mengundang/{slug}/reply', [InvitationController::class, 'replyToComment']);
+Route::post('/mengundang/{slug}/attendance', [InvitationController::class, 'updateAttendance']);
