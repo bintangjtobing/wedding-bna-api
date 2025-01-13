@@ -45,7 +45,8 @@
 
   <!-- Vector Maps -->
   <link type="text/css" href="{{asset('assets/vendor/jqvmap/jqvmap.min.css')}}" rel="stylesheet">
-
+  <!-- Toastr -->
+  <link type="text/css" href="{{ asset('assets/vendor/toastr.min.css') }}" rel="stylesheet">
 </head>
 
 <body class="layout-default">
@@ -163,6 +164,7 @@
             <div class="row card-group-row">
               @yield('content')
             </div>
+
           </div>
 
         </div>
@@ -244,11 +246,11 @@
   </div>
 
   <!-- jQuery -->
-  <script src="{{asset('assets/vendor/jquery.min.js')}}"></script>
+  <!-- Bootstrap JS, Popper.js, dan jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
 
-  <!-- Bootstrap -->
-  <script src="{{asset('assets/vendor/popper.min.js')}}"></script>
-  <script src="{{asset('assets/vendor/bootstrap.min.js')}}"></script>
 
   <!-- Perfect Scrollbar -->
   <script src="{{asset('assets/vendor/perfect-scrollbar.min.js')}}"></script>
@@ -268,13 +270,101 @@
 
   <!-- App Settings (safe to remove) -->
   <script src="{{asset('assets/js/app-settings.js')}}"></script>
+  <!-- Modal Tambah Tamu -->
+  <div class="modal fade" id="addGuestModal" tabindex="-1" aria-labelledby="addGuestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addGuestModalLabel">Tambah Tamu</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="/guests">
+            @csrf
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="name">Nama</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Nama Tamu" required>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="specific_call">Sapaan</label>
+                <select class="form-control" id="specific_call" name="specific_call">
+                  <option value="Bang">Bang</option>
+                  <option value="Kak">Kak</option>
+                  <option value="Bapak">Bapak</option>
+                  <option value="Ibu">Ibu</option>
+                  <option value="Mas">Mas</option>
+                  <option value="Mr">Mr</option>
+                  <option value="Mrs">Mrs</option>
+                  <option value="Ms">Ms</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email Tamu" required>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="phone_number">Nomor Telepon</label>
+                <input type="text" class="form-control" id="phone_number" name="phone_number"
+                  placeholder="Nomor Telepon" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="friend_of">Friend Of</label>
+                <select class="form-control" id="friend_of" name="friend_of">
+                  <option value="Bintang">Bintang</option>
+                  <option value="Ayu">Ayu</option>
+                </select>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="region">Region</label>
+                <select class="form-control" id="region" name="region">
+                  <option value="Medan">Medan</option>
+                  <option value="Jakarta">Jakarta</option>
+                  <option value="Bandung">Bandung</option>
+                  <option value="Pekanbaru">Pekanbaru</option>
+                  <option value="Riau">Riau</option>
+                  <option value="Malaysia">Malaysia</option>
+                  <option value="India">India</option>
+                  <option value="Istanbul">Istanbul</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="gender">Gender</label>
+                <select class="form-control" id="gender" name="gender">
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="attend">Hadir</label>
+                <select class="form-control" id="attend" name="attend">
+                  <option value="1">Yes</option>
+                  <option value="0">No</option>
+                  <option value="2">Maybe</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Flatpickr -->
   <script src="{{asset('assets/vendor/flatpickr/flatpickr.min.js')}}"></script>
   <script src="{{asset('assets/js/flatpickr.js')}}"></script>
 
   <!-- Global Settings -->
-  {{-- <script src="{{asset('assets/js/settings.js')}}"></script> --}}
+  <script src="{{asset('assets/js/settings.js')}}"></script>
 
   <!-- Moment.js -->
   <script src="{{asset('assets/vendor/moment.min.js')}}"></script>
@@ -295,7 +385,9 @@
   <script src="{{asset('assets/vendor/jqvmap/jquery.vmap.min.js')}}"></script>
   <script src="{{asset('assets/vendor/jqvmap/maps/jquery.vmap.world.js')}}"></script>
   <script src="{{asset('assets/js/vector-maps.js')}}"></script>
-
+  <!-- Toastr -->
+  <script src="{{ asset('assets/vendor/toastr.min.js') }}"></script>
+  <script src="{{ asset('assets/js/toastr.js') }}"></script>
 </body>
 
 </html>

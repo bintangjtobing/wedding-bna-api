@@ -10,8 +10,9 @@
         nomor telepon, email, dan status kehadiran.</p>
       <form method="POST" action="/send-invitations" id="sendInvitationForm">
         @csrf
-        <button type="submit" class="btn btn-primary">Send Invitations</button>
+        <button type="submit" class="btn btn-primary mb-2">Send Invitations</button>
       </form>
+      <button class="btn btn-success" data-toggle="modal" data-target="#addGuestModal">Tambah Tamu</button>
     </div>
     <div class="col-lg-9 card-form__body">
       <div class="table-responsive border-bottom">
@@ -53,5 +54,47 @@
     </div>
   </div>
 </div>
+<div class="row mt-4" style="display: none;">
+  <div class="col">
+    <div class="text-center p-3">
+      <p class="text-label">Success Example</p>
+      <button type="button" class="btn btn-success" data-toggle="toastr" data-toastr-type="success"
+        data-toastr-title="Well Done!" data-toastr-message="You successfully read this important alert message.">
+        Click me
+      </button>
+    </div>
+  </div>
+  <div class="col">
+    <div class="text-center p-3">
+      <p class="text-label">Danger Example</p>
+      <button type="button" class="btn btn-danger" data-toggle="toastr" data-toastr-type="error"
+        data-toastr-title="Oh snap!" data-toastr-message="Change a few things up and try submitting again.">
+        Click me
+      </button>
+    </div>
+  </div>
+</div>
+@if (session('success'))
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    toastr.success("{{ session('success') }}", "Success", {
+      closeButton: true,
+      progressBar: true,
+      positionClass: "toast-top-right"
+    });
+  });
+</script>
+@endif
 
+@if (session('error'))
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    toastr.error("{{ session('error') }}", "Error", {
+      closeButton: true,
+      progressBar: true,
+      positionClass: "toast-top-right"
+    });
+  });
+</script>
+@endif
 @endsection

@@ -56,3 +56,22 @@ Route::post('/send-invitations', function () {
 
     return redirect()->back()->with('success', 'Invitations successfully sent!');
 });
+Route::post('/guests', function (Request $request) {
+    // Validasi input
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'specific_call' => 'required|string',
+        'email' => 'required|email|max:255',
+        'phone_number' => 'required|string|max:20',
+        'friend_of' => 'nullable|string',
+        'region' => 'nullable|string',
+        'gender' => 'nullable|string',
+        'attend' => 'required|integer|in:0,1,2',
+    ]);
+
+    $validated['slug_name'] = strtolower(str_replace(' ', '-', $validated['name']));
+
+    Guest::create($validated);
+
+    return redirect()->back()->with('success', 'Tamu berhasil ditambahkan');
+});
