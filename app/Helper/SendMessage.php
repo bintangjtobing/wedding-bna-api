@@ -12,7 +12,7 @@ class SendMessage
 
     public function __construct()
     {
-        $this->apiToken = env("TOKEN_FONTE", 'PfwWgQsgThTLanYC7E-6');
+        $this->apiToken = env("TOKEN_FONTE", 'fTrWCsbMrqq2yuizhsXv');
     }
 
     public function send($phone, $message)
