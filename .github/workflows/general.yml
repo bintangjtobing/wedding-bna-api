@@ -37,5 +37,7 @@ jobs:
 
       - name: Set Permissions
         run: |
+          sshpass -p 'Seni@ti12345' ssh -o StrictHostKeyChecking=no root@195.35.23.150 'chown -R www-data:www-data /var/www/wedding-bna-api/storage /var/www/wedding-bna-api/bootstrap/cache'
           sshpass -p 'Seni@ti12345' ssh -o StrictHostKeyChecking=no root@195.35.23.150 'find /var/www/wedding-bna-api/storage/ -type d -exec chmod 775 {} \;'
           sshpass -p 'Seni@ti12345' ssh -o StrictHostKeyChecking=no root@195.35.23.150 'find /var/www/wedding-bna-api/bootstrap/cache/ -type d -exec chmod 775 {} \;'
+          sshpass -p 'Seni@ti12345' ssh -o StrictHostKeyChecking=no root@195.35.23.150 'find /var/www/wedding-bna-api/storage/ -type f -exec chmod 664 {} \;'
