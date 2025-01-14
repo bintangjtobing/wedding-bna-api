@@ -30,7 +30,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           # Deploy application files
-          sshpass -p 'Seni@ti12345' rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ root@195.35.23.150://var/www/wedding-bna-api/
+          sshpass -p 'Seni@ti12345' rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ root@195.35.23.150:/var/www/wedding-bna-api/
 
           # Update server
           sshpass -p 'Seni@ti12345' ssh -o StrictHostKeyChecking=no root@195.35.23.150 'cd /var/www/wedding-bna-api && php artisan config:cache && php artisan route:cache && php artisan view:cache'
