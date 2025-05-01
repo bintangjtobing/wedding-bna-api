@@ -212,6 +212,30 @@ class ContactController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+    public function showImportForm()
+    {
+        return view('contacts.import');
+    }
+    public function resetAllStatus(Request $request)
+    {
+        $admin = Auth::guard('admin')->user();
+
+        // Jika ada filter status
+        if ($request->has('status') && in_array($request->status, ['terkirim', 'gagal', 'belum_dikirim'])) {
+            $admin->contacts()->where('invitation_status', $request->status)->update([
+                'invitation_status' => 'belum_dikirim',
+                'sent_at' => null
+            ]);
+        } else {
+            // Reset semua kontak
+            $admin->contacts()->update([
+                'invitation_status' => 'belum_dikirim',
+                'sent_at' => null
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Status undangan berhasil direset.');
+    }
     public function exportTemplate()
     {
         $headers = [
@@ -327,5 +351,83 @@ class ContactController extends Controller
                 'deleted_ids' => $deletedIds,
             ]
         ]);
+    }
+    public function importContacts(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+        ]);
+
+        $admin = Auth::guard('admin')->user();
+        $file = $request->file('csv_file');
+
+        $path = $file->getRealPath();
+        $records = array_map('str_getcsv', file($path));
+
+        // Asumsikan baris pertama adalah header
+        $headers = array_shift($records);
+
+        // Tentukan indeks kolom nama dan nomor telepon
+        $nameIndex = array_search('nama', array_map('strtolower', $headers));
+        $phoneIndex = array_search('telepon', array_map('strtolower', $headers)) ??
+                    array_search('nomor', array_map('strtolower', $headers)) ??
+                    array_search('hp', array_map('strtolower', $headers)) ??
+                    array_search('no_hp', array_map('strtolower', $headers));
+
+        if ($nameIndex === false || $phoneIndex === false) {
+            return redirect()->back()->with('error', 'Format CSV tidak valid. Pastikan terdapat kolom "nama" dan "telepon/nomor/hp/no_hp".');
+        }
+
+        $importedCount = 0;
+        $errors = [];
+
+        foreach ($records as $index => $record) {
+            if (isset($record[$nameIndex]) && isset($record[$phoneIndex])) {
+                $name = trim($record[$nameIndex]);
+                $phone = trim($record[$phoneIndex]);
+
+                // Validasi data
+                if (empty($name) || empty($phone)) {
+                    $errors[] = "Baris " . ($index + 2) . ": Nama atau nomor telepon kosong.";
+                    continue;
+                }
+
+                // Cek apakah nomor telepon sudah terdaftar
+                $existingContact = $admin->contacts()->where('phone_number', $phone)->first();
+                if ($existingContact) {
+                    $errors[] = "Baris " . ($index + 2) . ": Nomor telepon $phone sudah terdaftar atas nama {$existingContact->name}.";
+                    continue;
+                }
+
+                // Buat kontak baru
+                $admin->contacts()->create([
+                    'name' => $name,
+                    'phone_number' => $phone,
+                    'invitation_status' => 'belum_dikirim'
+                ]);
+
+                $importedCount++;
+            } else {
+                $errors[] = "Baris " . ($index + 2) . ": Format data tidak lengkap.";
+            }
+        }
+
+        $message = "Berhasil mengimpor $importedCount kontak.";
+        if (!empty($errors)) {
+            $message .= " Terdapat " . count($errors) . " error.";
+        }
+
+        return redirect()->route('contacts.index')->with('success', $message)
+            ->with('import_errors', $errors);
+    }
+    public function resetStatus(Request $request, Contact $contact)
+    {
+        $this->authorize('update', $contact);
+
+        $contact->updateInvitationStatus('belum_dikirim');
+        $contact->sent_at = null;
+        $contact->save();
+
+        return redirect()->back()->with('success', 'Status undangan berhasil direset.');
     }
 }

@@ -29,6 +29,8 @@ Route::middleware('auth:admin')->group(function () {
     Route::post('/messages/send', [MessageController::class, 'send'])->name('messages.send');
     Route::get('/messages/failed', [MessageController::class, 'showFailedContacts'])->name('messages.failed');
     Route::post('/messages/resend-failed', [MessageController::class, 'resendFailed'])->name('messages.resendFailed');
+    Route::get('/contacts/import', [ContactController::class, 'showImportForm'])->name('contacts.import');
+    Route::post('/contacts/import', [ContactController::class, 'importContacts'])->name('contacts.processImport');
     Route::get('/contacts/export', [ContactController::class, 'exportContacts'])->name('contacts.export');
     Route::get('/contacts/export-template', [ContactController::class, 'exportTemplate'])->name('contacts.exportTemplate');
     Route::post('/contacts/bulk-delete', [ContactController::class, 'bulkDelete'])->name('contacts.bulkDelete');
@@ -39,4 +41,6 @@ Route::middleware('auth:admin')->group(function () {
     Route::put('/templates/{template}', [MessageTemplateController::class, 'update'])->name('templates.update');
     Route::delete('/templates/{template}', [MessageTemplateController::class, 'destroy'])->name('templates.destroy');
     Route::get('/templates/{template}/use', [MessageTemplateController::class, 'use'])->name('templates.use');
+    Route::post('/contacts/reset-all', [ContactController::class, 'resetAllStatus'])->name('contacts.resetAll');
+    Route::patch('/contacts/{contact}/reset-status', [ContactController::class, 'resetStatus'])->name('contacts.resetStatus');
 });

@@ -2,18 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Contact extends Model
 {
-    use HasFactory;
     protected $fillable = [
         'admin_id',
         'name',
         'phone_number',
         'invitation_status',
         'sent_at',
+    ];
+
+    /**
+     * Atribut yang harus diubah tipenya.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'sent_at' => 'datetime',
     ];
 
     public function admin()
@@ -25,6 +33,7 @@ class Contact extends Model
     {
         return $this->hasMany(MessageLog::class);
     }
+
     // Method untuk mengupdate status undangan
     public function updateInvitationStatus($status, $timestamp = null)
     {

@@ -9,9 +9,15 @@ use App\Models\MessageLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use App\Services\WhatsAppService;
 
 class MessageController extends Controller
 {
+    protected $whatsappService;
+    public function __construct(WhatsAppService $whatsappService)
+    {
+        $this->whatsappService = $whatsappService;
+    }
     public function create()
     {
         $currentAdmin = Auth::guard('admin')->user();
@@ -35,6 +41,10 @@ class MessageController extends Controller
         ));
     }
 
+    private function sendWhatsAppMessage($apiKey, $phoneNumber, $message, $recipientName = null)
+    {
+        return $this->whatsappService->sendMessage($apiKey, $phoneNumber, $message, $recipientName);
+    }
     public function send(Request $request)
     {
         $validated = $request->validate([
@@ -79,11 +89,12 @@ class MessageController extends Controller
                 // Personalisasi pesan dengan mengganti [NAMA] dengan nama kontak
                 $personalizedMessage = str_replace('[NAMA]', $contact->name, $validated['message_content']);
 
-                // Kirim pesan via WhatsApp API
+                // Kirim pesan via WhatsApp API (menggunakan Fonnte)
                 $result = $this->sendWhatsAppMessage(
                     $admin->whatsapp_api_key,
                     $contact->phone_number,
-                    $personalizedMessage
+                    $personalizedMessage,
+                    $contact->name
                 );
 
                 // Update status log pesan dan status undangan di kontak
@@ -113,39 +124,6 @@ class MessageController extends Controller
 
         return redirect()->route('dashboard')
             ->with('success', "Pesan terkirim ke {$sentCount} kontak, gagal ke {$failedCount} kontak.");
-    }
-
-    // Fungsi untuk mengirim pesan WhatsApp
-    private function sendWhatsAppMessage($apiKey, $phoneNumber, $message)
-    {
-        try {
-            // Contoh implementasi, sesuaikan dengan provider WhatsApp API yang digunakan
-            // Misalnya: Twilio, Chat API, dll.
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $apiKey,
-                'Content-Type' => 'application/json',
-            ])->post('https://api.whatsapp-provider.com/send', [
-                'phone' => $phoneNumber,
-                'message' => $message,
-            ]);
-
-            if ($response->successful()) {
-                return [
-                    'success' => true,
-                    'response' => $response->json(),
-                ];
-            } else {
-                return [
-                    'success' => false,
-                    'error' => $response->body(),
-                ];
-            }
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'error' => $e->getMessage(),
-            ];
-        }
     }
 
     // API endpoint untuk mengirim pesan undangan

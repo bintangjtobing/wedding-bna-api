@@ -66,7 +66,26 @@
                 <button type="button" class="btn btn-outline-secondary" id="select-all-btn">Pilih Semua</button>
                 <button type="button" class="btn btn-outline-secondary" id="deselect-all-btn">Batal Pilih</button>
             </div>
-
+            @if(!$contacts->isEmpty())
+            <div class="mb-3">
+                <form action="{{ route('contacts.resetAll') }}" method="POST" class="d-inline">
+                    @csrf
+                    @if(request('status'))
+                    <input type="hidden" name="status" value="{{ request('status') }}">
+                    @endif
+                    <button type="submit" class="btn btn-warning"
+                        onclick="return confirm('Apakah Anda yakin ingin mereset semua status undangan yang ditampilkan?')">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset Status Undangan
+                        @if(request('status'))
+                        {{ request('status') == 'belum_dikirim' ? 'Belum Dikirim' : (request('status') == 'terkirim' ?
+                        'Terkirim' : 'Gagal') }}
+                        @else
+                        Semua
+                        @endif
+                    </button>
+                </form>
+            </div>
+            @endif
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -95,7 +114,17 @@
                                 <span class="badge bg-danger">Gagal</span>
                                 @endif
                             </td>
-                            <td>{{ $contact->sent_at ? $contact->sent_at->format('d M Y H:i') : '-' }}</td>
+                            <td>
+                                @if($contact->sent_at)
+                                @if(is_string($contact->sent_at))
+                                {{ \Carbon\Carbon::parse($contact->sent_at)->format('d M Y H:i') }}
+                                @else
+                                {{ $contact->sent_at->format('d M Y H:i') }}
+                                @endif
+                                @else
+                                -
+                                @endif
+                            </td>
                             <td>
                                 <div class="btn-group">
                                     <a href="{{ route('contacts.edit', $contact) }}"
