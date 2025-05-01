@@ -28,7 +28,7 @@ jobs:
 
       - name: Copy Environment File
         run: |
-          cp .env.staging .env
+          cp .env.example .env
 
       - name: Deploy Production
         if: github.ref == 'refs/heads/main'
