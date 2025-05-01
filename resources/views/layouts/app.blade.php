@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Undangan Pernikahan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
 </head>
 
 <body>
@@ -26,6 +27,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('messages.create') }}">Kirim Pesan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('templates.index') }}">Template Pesan</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">

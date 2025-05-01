@@ -11,6 +11,8 @@ class Message extends Model
 
     protected $fillable = [
         'content',
+        'is_template',
+        'template_name',
     ];
 
     public function logs()

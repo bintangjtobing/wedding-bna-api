@@ -237,14 +237,14 @@ class MessageController extends Controller
             }
         }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => "Pesan terkirim ke {$sentCount} kontak, gagal ke {$failedCount} kontak.",
-            'data' => [
-                'sent_count' => $sentCount,
-                'failed_count' => $failedCount,
-                'logs' => $logs,
-            ]
-        ]);
+    return response()->json([
+        'status' => 'success',
+        'message' => "Pesan terkirim ke {$sentCount} kontak, gagal ke {$failedCount} kontak.",
+        'data' => [
+            'sent_count' => $sentCount,
+            'failed_count' => $failedCount,
+            'logs' => $logs,
+        ]
+    ]);
     }
 }

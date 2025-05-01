@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->text('content');
+            $table->boolean('is_template')->default(false);
+            $table->string('template_name')->nullable();
             $table->timestamps();
         });
     }

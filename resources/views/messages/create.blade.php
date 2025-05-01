@@ -46,13 +46,24 @@
                 </div>
             </div>
         </div>
-
+        @if(isset($template))
+        <div class="alert alert-info mb-4">
+            <h5>Menggunakan template: {{ $template->template_name }}</h5>
+        </div>
+        @else
+        <div class="mb-4">
+            <a href="{{ route('templates.index') }}" class="btn btn-outline-info">
+                <i class="bi bi-file-text"></i> Gunakan Template Pesan
+            </a>
+        </div>
+        @endif
         <form action="{{ route('messages.send') }}" method="POST">
             @csrf
             <div class="mb-3">
                 <label for="message_content" class="form-label">Isi Pesan</label>
                 <textarea class="form-control @error('message_content') is-invalid @enderror" id="message_content"
-                    name="message_content" rows="5" required>{{ old('message_content') }}</textarea>
+                    name="message_content" rows="5"
+                    required>{{ old('message_content', isset($template) ? $template->content : '') }}</textarea>
                 <div class="form-text">Gunakan [NAMA] untuk menyertakan nama tamu di pesan.</div>
                 @error('message_content')
                 <div class="invalid-feedback">{{ $message }}</div>
