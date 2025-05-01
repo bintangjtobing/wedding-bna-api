@@ -14,9 +14,9 @@ use App\Services\WhatsAppService;
 class MessageController extends Controller
 {
     protected $whatsappService;
-    public function __construct(WhatsAppService $whatsappService)
+    public function __construct(WhatsAppService $whatsappService = null)
     {
-        $this->whatsappService = $whatsappService;
+        $this->whatsappService = $whatsappService ?? app(WhatsAppService::class);
     }
     public function create()
     {
@@ -86,15 +86,16 @@ class MessageController extends Controller
                     'status' => 'pending',
                 ]);
 
-                // Personalisasi pesan dengan mengganti [NAMA] dengan nama kontak
-                $personalizedMessage = str_replace('[NAMA]', $contact->name, $validated['message_content']);
+                // Personalisasi pesan dengan mengganti placeholder dengan data kontak
+                $originalMessage = $validated['message_content'];
+                $personalizedMessage = $this->personalizeMessage($originalMessage, $contact);
 
                 // Kirim pesan via WhatsApp API (menggunakan Fonnte)
                 $result = $this->sendWhatsAppMessage(
                     $admin->whatsapp_api_key,
                     $contact->phone_number,
                     $personalizedMessage,
-                    $contact->name
+                    $contact->name // Nama kontak untuk Fonnte API
                 );
 
                 // Update status log pesan dan status undangan di kontak
@@ -125,7 +126,79 @@ class MessageController extends Controller
         return redirect()->route('dashboard')
             ->with('success', "Pesan terkirim ke {$sentCount} kontak, gagal ke {$failedCount} kontak.");
     }
+    public function resendFailed(Request $request)
+    {
+        $validated = $request->validate([
+            'message_content' => 'required|string',
+            'admin_selection' => 'required|array',
+            'admin_selection.*' => 'exists:admins,id',
+        ]);
 
+        // Simpan pesan baru
+        $message = Message::create([
+            'content' => $validated['message_content'],
+        ]);
+
+        $sentCount = 0;
+        $failedCount = 0;
+        $now = now();
+
+        // Kirim pesan berdasarkan admin yang dipilih
+        foreach ($validated['admin_selection'] as $adminId) {
+            $admin = Admin::findOrFail($adminId);
+
+            // Ambil kontak yang sebelumnya gagal
+            $contacts = $admin->contacts()->where('invitation_status', 'gagal')->get();
+
+            foreach ($contacts as $contact) {
+                // Buat log pesan
+                $messageLog = MessageLog::create([
+                    'message_id' => $message->id,
+                    'contact_id' => $contact->id,
+                    'admin_id' => $admin->id,
+                    'status' => 'pending',
+                ]);
+
+                // Personalisasi pesan dengan data kontak
+                $originalMessage = $validated['message_content'];
+                $personalizedMessage = $this->personalizeMessage($originalMessage, $contact);
+
+                // Kirim pesan via WhatsApp API
+                $result = $this->sendWhatsAppMessage(
+                    $admin->whatsapp_api_key,
+                    $contact->phone_number,
+                    $personalizedMessage,
+                    $contact->name
+                );
+
+                // Update status log pesan dan status undangan di kontak
+                if ($result['success']) {
+                    $messageLog->update([
+                        'status' => 'sent',
+                        'response' => json_encode($result['response']),
+                    ]);
+
+                    // Update status undangan di kontak
+                    $contact->updateInvitationStatus('terkirim', $now);
+
+                    $sentCount++;
+                } else {
+                    $messageLog->update([
+                        'status' => 'failed',
+                        'response' => json_encode($result['error']),
+                    ]);
+
+                    // Update status undangan di kontak tetap gagal
+                    $contact->updateInvitationStatus('gagal');
+
+                    $failedCount++;
+                }
+            }
+        }
+
+        return redirect()->route('dashboard')
+            ->with('success', "Pengiriman ulang berhasil: {$sentCount} terkirim, {$failedCount} gagal.");
+    }
     // API endpoint untuk mengirim pesan undangan
     public function apiSendMessage(Request $request)
     {
@@ -224,5 +297,17 @@ class MessageController extends Controller
             'logs' => $logs,
         ]
     ]);
+    }
+    private function personalizeMessage($message, Contact $contact)
+    {
+        $replacements = [
+            '[NAMA]' => $contact->name,
+            '[USERNAME]' => $contact->username,
+            '[PANGGILAN]' => $contact->greeting ?: $contact->name,
+            '[NEGARA]' => $contact->country,
+            '[KODE_NEGARA]' => $contact->country_code,
+        ];
+
+        return str_replace(array_keys($replacements), array_values($replacements), $message);
     }
 }

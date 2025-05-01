@@ -19,4 +19,8 @@ class ContactPolicy
     {
         return $admin->id === $contact->admin_id;
     }
+    public function view(Admin $admin, Contact $contact)
+    {
+        return $admin->id === $contact->admin_id;
+    }
 }

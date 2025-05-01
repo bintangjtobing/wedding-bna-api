@@ -46,7 +46,7 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
+            'driver' => 'sanctum',
             'provider' => 'admins',
             'hash' => false,
         ],
@@ -76,8 +76,8 @@ return [
         ],
 
         'admins' => [
-        'driver' => 'eloquent',
-        'model' => App\Models\Admin::class,
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
         ],
     ],
 

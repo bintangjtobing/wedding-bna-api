@@ -30,7 +30,15 @@ class ContactController extends Controller
         $contacts = $query->latest()->paginate(20);
         return view('contacts.index', compact('contacts'));
     }
+    public function show(Contact $contact)
+    {
+        $this->authorize('view', $contact);
 
+        // Eager load relasi yang dibutuhkan untuk mengurangi jumlah query
+        $contact->load(['admin', 'messageLogs.message', 'messageLogs.admin']);
+
+        return view('contacts.show', compact('contact'));
+    }
     public function create()
     {
         return view('contacts.create');
@@ -66,8 +74,22 @@ class ContactController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'username' => 'nullable|string|max:100|unique:contacts,username,' . $contact->id,
             'phone_number' => 'required|string|max:20',
+            'country' => 'required|string|size:2',
+            'country_code' => 'required|string|max:5',
+            'greeting' => 'nullable|string|max:50',
+            'invitation_status' => 'required|in:belum_dikirim,terkirim,gagal',
         ]);
+
+        // Simpan waktu status terakhir jika mengubah status
+        if ($contact->invitation_status !== $validated['invitation_status']) {
+            if ($validated['invitation_status'] === 'terkirim') {
+                $contact->sent_at = now();
+            } elseif ($validated['invitation_status'] === 'belum_dikirim') {
+                $contact->sent_at = null;
+            }
+        }
 
         $contact->update($validated);
 
@@ -85,10 +107,19 @@ class ContactController extends Controller
     }
 
     // API endpoint untuk mendapatkan daftar kontak
-    public function apiGetContacts()
+    public function apiGetContacts(Request $request)
     {
-        $admin = Auth::guard('admin')->user();
-        $contacts = $admin->contacts;
+        // Gunakan auth()->user() untuk mendapatkan user yang saat ini login via API
+        $admin = auth()->user();
+
+        if (!$admin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        $contacts = $admin->contacts()->get();
 
         return response()->json([
             'status' => 'success',
@@ -97,7 +128,15 @@ class ContactController extends Controller
     }
     public function apiSearchContacts(Request $request)
     {
-        $admin = Auth::guard('admin')->user();
+        $admin = auth()->user();
+
+        if (!$admin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
         $query = $admin->contacts();
 
         // Filter berdasarkan status undangan jika ada
@@ -142,12 +181,20 @@ class ContactController extends Controller
     // API endpoint untuk menambahkan kontak baru
     public function apiAddContact(Request $request)
     {
+        $admin = auth()->user();
+
+        if (!$admin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'phone_number' => 'required|string|max:20',
         ]);
 
-        $admin = Auth::guard('admin')->user();
         $contact = new Contact([
             'name' => $validated['name'],
             'phone_number' => $validated['phone_number'],
@@ -429,5 +476,95 @@ class ContactController extends Controller
         $contact->save();
 
         return redirect()->back()->with('success', 'Status undangan berhasil direset.');
+    }
+    public function apiGetFailedContacts()
+    {
+        $admin = auth()->user();
+
+        if (!$admin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        $failedContacts = $admin->contacts()->where('invitation_status', 'gagal')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $failedContacts
+        ]);
+    }
+    public function apiUpdateContact(Request $request, Contact $contact)
+    {
+        $admin = auth()->user();
+
+        if (!$admin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        // Periksa apakah kontak milik admin ini
+        if ($contact->admin_id !== $admin->id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Anda tidak memiliki akses untuk mengupdate kontak ini'
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'nullable|string|max:100|unique:contacts,username,' . $contact->id,
+            'phone_number' => 'required|string|max:20',
+            'country' => 'required|string|size:2',
+            'country_code' => 'required|string|max:5',
+            'greeting' => 'nullable|string|max:50',
+            'invitation_status' => 'required|in:belum_dikirim,terkirim,gagal',
+        ]);
+
+        // Simpan waktu status terakhir jika mengubah status
+        if ($contact->invitation_status !== $validated['invitation_status']) {
+            if ($validated['invitation_status'] === 'terkirim') {
+                $contact->sent_at = now();
+            } elseif ($validated['invitation_status'] === 'belum_dikirim') {
+                $contact->sent_at = null;
+            }
+        }
+
+        $contact->update($validated);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Kontak berhasil diperbarui.',
+            'data' => $contact
+        ]);
+    }
+    public function apiDeleteContact(Contact $contact)
+    {
+        $admin = auth()->user();
+
+        if (!$admin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        // Periksa apakah kontak milik admin ini
+        if ($contact->admin_id !== $admin->id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Anda tidak memiliki akses untuk menghapus kontak ini'
+            ], 403);
+        }
+
+        $contact->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Kontak berhasil dihapus.'
+        ]);
     }
 }
