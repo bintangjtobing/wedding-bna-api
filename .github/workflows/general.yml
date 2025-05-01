@@ -30,14 +30,14 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           # Deploy application files
-          sshpass -p 'Seni@ti12345' rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ root@195.35.23.150:/var/www/wedding-bna-api/
+          sshpass -p 'c#)rgPMzNC2998@Vb4.M' rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ root@147.93.30.80:/var/www/wedding-bna-api/
 
           # Update server
-          sshpass -p 'Seni@ti12345' ssh -o StrictHostKeyChecking=no root@195.35.23.150 'cd /var/www/wedding-bna-api && php artisan config:cache && php artisan route:cache && php artisan view:cache'
+          sshpass -p 'c#)rgPMzNC2998@Vb4.M' ssh -o StrictHostKeyChecking=no root@147.93.30.80 'cd /var/www/wedding-bna-api && php artisan config:cache && php artisan route:cache && php artisan view:cache'
 
       - name: Set Permissions
         run: |
-          sshpass -p 'Seni@ti12345' ssh -o StrictHostKeyChecking=no root@195.35.23.150 'chown -R www-data:www-data /var/www/wedding-bna-api/storage /var/www/wedding-bna-api/bootstrap/cache'
-          sshpass -p 'Seni@ti12345' ssh -o StrictHostKeyChecking=no root@195.35.23.150 'find /var/www/wedding-bna-api/storage/ -type d -exec chmod 775 {} \;'
-          sshpass -p 'Seni@ti12345' ssh -o StrictHostKeyChecking=no root@195.35.23.150 'find /var/www/wedding-bna-api/bootstrap/cache/ -type d -exec chmod 775 {} \;'
-          sshpass -p 'Seni@ti12345' ssh -o StrictHostKeyChecking=no root@195.35.23.150 'find /var/www/wedding-bna-api/storage/ -type f -exec chmod 664 {} \;'
+          sshpass -p 'c#)rgPMzNC2998@Vb4.M' ssh -o StrictHostKeyChecking=no root@147.93.30.80 'chown -R www-data:www-data /var/www/wedding-bna-api/storage /var/www/wedding-bna-api/bootstrap/cache'
+          sshpass -p 'c#)rgPMzNC2998@Vb4.M' ssh -o StrictHostKeyChecking=no root@147.93.30.80 'find /var/www/wedding-bna-api/storage/ -type d -exec chmod 775 {} \;'
+          sshpass -p 'c#)rgPMzNC2998@Vb4.M' ssh -o StrictHostKeyChecking=no root@147.93.30.80 'find /var/www/wedding-bna-api/bootstrap/cache/ -type d -exec chmod 775 {} \;'
+          sshpass -p 'c#)rgPMzNC2998@Vb4.M' ssh -o StrictHostKeyChecking=no root@147.93.30.80 'find /var/www/wedding-bna-api/storage/ -type f -exec chmod 664 {} \;'

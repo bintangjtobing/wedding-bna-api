@@ -1,85 +1,29 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MessageController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-use Illuminate\Http\Request;
-use App\Models\Guest;
-use App\Helper\SendMessage;
-
+// Route untuk halaman publik
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/dashboard', function(){
-    return view('dashboard.pages.index');
-})->name('dashboard');
-Route::get('/users', function(){
-    return view('dashboard.pages.users.index');
-})->name('users');
 
-Route::get('/guests', function () {
-    $guests = Guest::all();
-    return view('dashboard.pages.guests.index', ['guests' => $guests]);
-    // return response()->json($guests);
-});
+// Route untuk autentikasi
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::post('/send-invitations', function () {
-    $guests = Guest::all();
-    $sendMessage = new SendMessage();
+// Route yang memerlukan autentikasi
+Route::middleware('auth:admin')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    try {
-        foreach ($guests as $guest) {
-            $specificCall = $guest->specific_call ?? 'Kak';
-            $slug = strtolower(str_replace(' ', '-', $guest->name));
+    // Route untuk kontak
+    Route::resource('contacts', ContactController::class);
 
-            $message = "Halo {$specificCall} {$guest->name},\n\n";
-            $message .= "Tanpa mengurangi rasa hormat, izinkan kami mengundang {$specificCall} {$guest->name} untuk menghadiri acara pernikahan kami.\n\n";
-            $message .= "*Berikut link undangan kami*, untuk info lengkap dari acara bisa kunjungi:\n";
-            $message .= "https://wedding-bintang.baharihari.com/mengundang/{$slug}\n\n";
-            $message .= "Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk menyempatkan waktu hadir dan memberikan doa restu ke acara yang telah kami sediakan.\n\n";
-            $message .= "*Mohon maaf perihal undangan hanya dibagikan melalui pesan Whatsapp.*\n\n";
-            $message .= "Diharapkan untuk *tetap menjaga kesehatan bersama dan sangat besar harapan untuk datang pada jam yang telah disepakati.*\n\n";
-            $message .= "Terima kasih banyak atas perhatiannya.\n\n";
-            $message .= "Kami yang mengundang dengan bahagia,\n";
-            $message .= "Bintang Tobing & Ayu Sinaga";
-
-            $sendMessage->send($guest->phone_number, $message);
-        }
-
-        return redirect()->back()->with('success', 'Invitations successfully sent!');
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Failed to send invitations. Error: ' . $e->getMessage());
-    }
-});
-
-Route::post('/guests', function (Request $request) {
-    try {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'specific_call' => 'required|string',
-            'email' => 'required|email|max:255',
-            'phone_number' => 'required|string|max:20',
-            'friend_of' => 'nullable|string',
-            'region' => 'nullable|string',
-            'gender' => 'nullable|string',
-            'attend' => 'required|integer|in:0,1,2',
-        ]);
-
-        $validated['slug_name'] = strtolower(str_replace(' ', '-', $validated['name']));
-
-        Guest::create($validated);
-
-        return redirect()->back()->with('success', 'Tamu berhasil ditambahkan');
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Failed to add guest. Error: ' . $e->getMessage());
-    }
+    // Route untuk pesan
+    Route::get('/messages/create', [MessageController::class, 'create'])->name('messages.create');
+    Route::post('/messages/send', [MessageController::class, 'send'])->name('messages.send');
 });
