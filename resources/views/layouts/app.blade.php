@@ -31,6 +31,17 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('templates.index') }}">Template Pesan</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('invitation_messages.index') }}">
+                            Ucapan & Doa
+                            @php
+                            $pendingCount = \App\Models\InvitationMessage::where('is_approved', false)->count();
+                            @endphp
+                            @if($pendingCount > 0)
+                            <span class="badge bg-warning">{{ $pendingCount }}</span>
+                            @endif
+                        </a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">

@@ -21,6 +21,11 @@ use App\Http\Controllers\MessageTemplateController;
 
 // Route Public tanpa autentikasi
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/invitation/{username}', [App\Http\Controllers\ContactController::class, 'apiGetContactByUsername']);
+Route::post('/invitation/messages', [App\Http\Controllers\Api\InvitationMessageController::class, 'store']);
+Route::get('/invitation/messages', [App\Http\Controllers\Api\InvitationMessageController::class, 'getAllMessages']);
+Route::get('/invitation/{username}/messages', [App\Http\Controllers\Api\InvitationMessageController::class, 'getMessagesByUsername']);
+
 
 // Route yang memerlukan autentikasi
 Route::middleware('auth:sanctum')->group(function () {
@@ -53,4 +58,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Statistik
     Route::get('/statistics', [StatisticController::class, 'getStatistics']);
+
+    Route::patch('/invitation/messages/{message}', [App\Http\Controllers\Api\InvitationMessageController::class, 'updateApprovalStatus']);
+    Route::delete('/invitation/messages/{message}', [App\Http\Controllers\Api\InvitationMessageController::class, 'destroy']);
+
 });

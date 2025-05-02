@@ -149,15 +149,22 @@ class ContactController extends Controller
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('phone_number', 'like', "%{$search}%");
+                  ->orWhere('phone_number', 'like', "%{$search}%")
+                  ->orWhere('username', 'like', "%{$search}%"); // Tambahkan pencarian berdasarkan username
             });
+        }
+
+        // Pencarian kontak berdasarkan username
+        if ($request->has('username') && !empty($request->username)) {
+            $username = $request->username;
+            $query->where('username', $username);
         }
 
         // Pengurutan
         $sortBy = $request->input('sort_by', 'created_at');
         $sortOrder = $request->input('sort_order', 'desc');
 
-        $allowedSortColumns = ['name', 'phone_number', 'invitation_status', 'sent_at', 'created_at'];
+        $allowedSortColumns = ['name', 'phone_number', 'username', 'invitation_status', 'sent_at', 'created_at'];
 
         if (in_array($sortBy, $allowedSortColumns)) {
             $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
@@ -565,6 +572,25 @@ class ContactController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Kontak berhasil dihapus.'
+        ]);
+    }
+    public function apiGetContactByUsername($username)
+    {
+        $contact = Contact::where('username', $username)->first();
+
+        if (!$contact) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Contact not found',
+            ], 404);
+        }
+
+        // Hilangkan informasi sensitif
+        $contact->makeHidden(['admin_id']);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $contact
         ]);
     }
 }

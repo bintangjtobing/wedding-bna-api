@@ -1340,6 +1340,412 @@
                 }
             ],
             "description": "Endpoints for retrieving statistics"
+        },
+        {
+            "name": "Invitation Messages",
+            "item": [
+                {
+                    "name": "Get All Messages",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/invitation/messages",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "invitation",
+                                "messages"
+                            ]
+                        },
+                        "description": "Get all approved invitation messages."
+                    },
+                    "response": [
+                        {
+                            "name": "Successful response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/invitation/messages",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "invitation",
+                                        "messages"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [],
+                            "cookie": [],
+                            "body": "{\n  \"status\": \"success\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"contact_id\": 1,\n      \"name\": \"Ahmad Rizky\",\n      \"message\": \"Selamat menempuh hidup baru! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.\",\n      \"attendance\": \"hadir\",\n      \"is_approved\": true,\n      \"created_at\": \"2023-05-01T15:30:00.000000Z\",\n      \"updated_at\": \"2023-05-01T15:30:00.000000Z\",\n      \"contact\": {\n        \"id\": 1,\n        \"name\": \"Ahmad Rizky\",\n        \"username\": \"ahmad-rizky\"\n      }\n    },\n    {\n      \"id\": 2,\n      \"contact_id\": 2,\n      \"name\": \"Budi Santoso\",\n      \"message\": \"Bahagia selalu untuk kedua mempelai! Maaf saya tidak bisa hadir.\",\n      \"attendance\": \"tidak_hadir\",\n      \"is_approved\": true,\n      \"created_at\": \"2023-05-01T16:00:00.000000Z\",\n      \"updated_at\": \"2023-05-01T16:00:00.000000Z\",\n      \"contact\": {\n        \"id\": 2,\n        \"name\": \"Budi Santoso\",\n        \"username\": \"budi-santoso\"\n      }\n    }\n  ]\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Contact by Username",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/invitation/ahmad-rizky",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "invitation",
+                                "ahmad-rizky"
+                            ]
+                        },
+                        "description": "Get a contact by their username."
+                    },
+                    "response": [
+                        {
+                            "name": "Successful response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/invitation/ahmad-rizky",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "invitation",
+                                        "ahmad-rizky"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [],
+                            "cookie": [],
+                            "body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Ahmad Rizky\",\n    \"username\": \"ahmad-rizky\",\n    \"phone_number\": \"81234567890\",\n    \"country\": \"ID\",\n    \"country_code\": \"62\",\n    \"greeting\": \"Pak Ahmad\",\n    \"invitation_status\": \"terkirim\",\n    \"sent_at\": \"2023-05-01T12:00:00.000000Z\",\n    \"created_at\": \"2023-05-01T10:00:00.000000Z\",\n    \"updated_at\": \"2023-05-01T12:00:00.000000Z\"\n  }\n}"
+                        },
+                        {
+                            "name": "Not Found response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/invitation/non-existent-username",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "invitation",
+                                        "non-existent-username"
+                                    ]
+                                }
+                            },
+                            "status": "Not Found",
+                            "code": 404,
+                            "_postman_previewlanguage": "json",
+                            "header": [],
+                            "cookie": [],
+                            "body": "{\n  \"status\": \"error\",\n  \"message\": \"Contact not found\"\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Messages by Username",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/invitation/ahmad-rizky/messages",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "invitation",
+                                "ahmad-rizky",
+                                "messages"
+                            ]
+                        },
+                        "description": "Get all messages for a specific contact by username."
+                    },
+                    "response": [
+                        {
+                            "name": "Successful response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/invitation/ahmad-rizky/messages",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "invitation",
+                                        "ahmad-rizky",
+                                        "messages"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [],
+                            "cookie": [],
+                            "body": "{\n  \"status\": \"success\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"contact_id\": 1,\n      \"name\": \"Ahmad Rizky\",\n      \"message\": \"Selamat menempuh hidup baru! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.\",\n      \"attendance\": \"hadir\",\n      \"is_approved\": true,\n      \"created_at\": \"2023-05-01T15:30:00.000000Z\",\n      \"updated_at\": \"2023-05-01T15:30:00.000000Z\"\n    }\n  ]\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Send Message",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"ahmad-rizky\",\n  \"name\": \"Ahmad Rizky\",\n  \"message\": \"Selamat menempuh hidup baru! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.\",\n  \"attendance\": \"hadir\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/invitation/messages",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "invitation",
+                                "messages"
+                            ]
+                        },
+                        "description": "Send a new invitation message (ucapan/doa)."
+                    },
+                    "response": [
+                        {
+                            "name": "Successful response",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"username\": \"ahmad-rizky\",\n  \"name\": \"Ahmad Rizky\",\n  \"message\": \"Selamat menempuh hidup baru! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.\",\n  \"attendance\": \"hadir\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/invitation/messages",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "invitation",
+                                        "messages"
+                                    ]
+                                }
+                            },
+                            "status": "Created",
+                            "code": 201,
+                            "_postman_previewlanguage": "json",
+                            "header": [],
+                            "cookie": [],
+                            "body": "{\n  \"status\": \"success\",\n  \"message\": \"Ucapan telah berhasil dikirim. Terima kasih!\",\n  \"data\": {\n    \"id\": 1,\n    \"contact_id\": 1,\n    \"name\": \"Ahmad Rizky\",\n    \"message\": \"Selamat menempuh hidup baru! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.\",\n    \"attendance\": \"hadir\",\n    \"is_approved\": true,\n    \"created_at\": \"2023-05-01T15:30:00.000000Z\",\n    \"updated_at\": \"2023-05-01T15:30:00.000000Z\"\n  }\n}"
+                        },
+                        {
+                            "name": "Validation Error response",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"username\": \"ahmad-rizky\",\n  \"name\": \"Ahmad Rizky\",\n  \"attendance\": \"hadir\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/invitation/messages",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "invitation",
+                                        "messages"
+                                    ]
+                                }
+                            },
+                            "status": "Unprocessable Entity",
+                            "code": 422,
+                            "_postman_previewlanguage": "json",
+                            "header": [],
+                            "cookie": [],
+                            "body": "{\n  \"message\": \"The message field is required.\",\n  \"errors\": {\n    \"message\": [\n      \"The message field is required.\"\n    ]\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Update Approval Status",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"is_approved\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/invitation/messages/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "invitation",
+                                "messages",
+                                "1"
+                            ]
+                        },
+                        "description": "Update the approval status of a message. Requires authentication."
+                    },
+                    "response": [
+                        {
+                            "name": "Successful response",
+                            "originalRequest": {
+                                "method": "PATCH",
+                                "header": [],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"is_approved\": true\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/invitation/messages/1",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "invitation",
+                                        "messages",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [],
+                            "cookie": [],
+                            "body": "{\n  \"status\": \"success\",\n  \"message\": \"Status persetujuan pesan berhasil diperbarui.\",\n  \"data\": {\n    \"id\": 1,\n    \"contact_id\": 1,\n    \"name\": \"Ahmad Rizky\",\n    \"message\": \"Selamat menempuh hidup baru! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.\",\n    \"attendance\": \"hadir\",\n    \"is_approved\": true,\n    \"created_at\": \"2023-05-01T15:30:00.000000Z\",\n    \"updated_at\": \"2023-05-01T16:00:00.000000Z\"\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Delete Message",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/invitation/messages/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "invitation",
+                                "messages",
+                                "1"
+                            ]
+                        },
+                        "description": "Delete an invitation message. Requires authentication."
+                    },
+                    "response": [
+                        {
+                            "name": "Successful response",
+                            "originalRequest": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/invitation/messages/1",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "invitation",
+                                        "messages",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [],
+                            "cookie": [],
+                            "body": "{\n  \"status\": \"success\",\n  \"message\": \"Pesan berhasil dihapus.\"\n}"
+                        }
+                    ]
+                }
+            ],
+            "description": "Endpoints for managing invitation messages (ucapan/doa)"
         }
     ],
     "event": [
