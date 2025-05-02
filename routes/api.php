@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\StatisticController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\MessageTemplateController;
-
+use App\Http\Controllers\Api\InvitationMessageController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,7 +23,17 @@ use App\Http\Controllers\MessageTemplateController;
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/invitation/{username}', [App\Http\Controllers\ContactController::class, 'apiGetContactByUsername']);
 Route::post('/invitation/messages', [App\Http\Controllers\Api\InvitationMessageController::class, 'store']);
-Route::get('/invitation/messages', [App\Http\Controllers\Api\InvitationMessageController::class, 'getAllMessages']);
+Route::get('/invitation/messages/all', function() {
+    $messages = \App\Models\InvitationMessage::where('is_approved', true)
+        ->orderBy('created_at', 'desc')
+        ->with('contact:id,name,username')
+        ->get();
+
+    return response()->json([
+        'status' => 'success',
+        'data' => $messages
+    ]);
+});
 Route::get('/invitation/{username}/messages', [App\Http\Controllers\Api\InvitationMessageController::class, 'getMessagesByUsername']);
 
 
