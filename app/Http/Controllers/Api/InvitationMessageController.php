@@ -74,6 +74,8 @@ class InvitationMessageController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        Log::info('Store method triggered', ['data' => $request->all()]);
+
         $validated = $request->validate([
             'username' => 'required|string|exists:contacts,username',
             'name' => 'required|string|max:255',
@@ -81,15 +83,20 @@ class InvitationMessageController extends Controller
             'attendance' => 'required|in:hadir,tidak_hadir,belum_pasti',
         ]);
 
+        Log::info('Validation passed', ['validated_data' => $validated]);
+
         // Cari kontak berdasarkan username
         $contact = Contact::where('username', $validated['username'])->first();
 
         if (!$contact) {
+            Log::error('Contact not found', ['username' => $validated['username']]);
             return response()->json([
                 'status' => 'error',
                 'message' => 'Contact not found',
             ], 404);
         }
+
+        Log::info('Contact found', ['contact_id' => $contact->id]);
 
         // Buat pesan ucapan baru
         $invitationMessage = InvitationMessage::create([
@@ -100,10 +107,23 @@ class InvitationMessageController extends Controller
             'is_approved' => true, // Defaultnya disetujui
         ]);
 
+        Log::info('Invitation message created', ['message_id' => $invitationMessage->id]);
+
         // Kirim feedback melalui WhatsApp
         $this->sendWhatsAppFeedback($contact, $invitationMessage);
+
         // Broadcast event untuk websocket
-        event(new \App\Events\NewInvitationMessage($invitationMessage));
+        try {
+            event(new \App\Events\NewInvitationMessage($invitationMessage));
+            Log::info('Event broadcasted');
+        } catch (\Exception $e) {
+            Log::error('Error broadcasting event', ['error' => $e->getMessage()]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to send broadcast event.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
 
         return response()->json([
             'status' => 'success',
@@ -111,6 +131,7 @@ class InvitationMessageController extends Controller
             'data' => $invitationMessage
         ], 201);
     }
+
 
     /**
      * Mengirim pesan feedback WhatsApp ke pengirim ucapan

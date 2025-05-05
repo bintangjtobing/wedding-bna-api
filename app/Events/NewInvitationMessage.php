@@ -4,16 +4,14 @@ namespace App\Events;
 
 use App\Models\InvitationMessage;
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class NewInvitationMessage implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable, SerializesModels;
 
     public $message;
 
@@ -24,7 +22,20 @@ class NewInvitationMessage implements ShouldBroadcast
      */
     public function __construct(InvitationMessage $message)
     {
+        // Log untuk memverifikasi bahwa event diterima dengan benar
+        Log::info('NewInvitationMessage Event triggered', [
+            'invitationMessageId' => $message->id,
+            'contact' => $message->contact->name ?? 'No Contact Found'
+        ]);
+
+        // Memuat relasi yang dibutuhkan
         $this->message = $message->load('contact:id,name,username');
+
+        // Log untuk memastikan relasi dimuat
+        Log::info('Invitation Message Loaded', [
+            'message' => $this->message->message,
+            'contact' => $this->message->contact->name ?? 'No Contact Found'
+        ]);
     }
 
     /**
@@ -34,6 +45,7 @@ class NewInvitationMessage implements ShouldBroadcast
      */
     public function broadcastOn()
     {
+        Log::info('Broadcasting event on channel "messages"');
         // Broadcast ke channel publik
         return new Channel('messages');
     }
@@ -46,5 +58,18 @@ class NewInvitationMessage implements ShouldBroadcast
     public function broadcastAs()
     {
         return 'new-message';
+    }
+
+    /**
+     * Menentukan data yang dibroadcast (opsional)
+     *
+     * @return array
+     */
+    public function broadcastWith()
+    {
+        Log::info('Broadcasting with data', ['message' => $this->message->message]);
+        return [
+            'message' => $this->message,
+        ];
     }
 }
