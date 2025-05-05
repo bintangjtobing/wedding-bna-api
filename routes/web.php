@@ -46,5 +46,7 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/invitation-messages', [App\Http\Controllers\InvitationMessageController::class, 'index'])->name('invitation_messages.index');
     Route::patch('/invitation-messages/{message}/toggle-approval', [App\Http\Controllers\InvitationMessageController::class, 'toggleApproval'])->name('invitation_messages.toggle_approval');
     Route::delete('/invitation-messages/{message}', [App\Http\Controllers\InvitationMessageController::class, 'destroy'])->name('invitation_messages.destroy');
-
+    Route::get('/laravel-websockets', function() {
+        return view('websockets');
+    });
 });

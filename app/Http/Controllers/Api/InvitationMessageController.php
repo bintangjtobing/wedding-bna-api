@@ -102,6 +102,8 @@ class InvitationMessageController extends Controller
 
         // Kirim feedback melalui WhatsApp
         $this->sendWhatsAppFeedback($contact, $invitationMessage);
+        // Broadcast event untuk websocket
+        event(new \App\Events\NewInvitationMessage($invitationMessage));
 
         return response()->json([
             'status' => 'success',
@@ -220,6 +222,7 @@ class InvitationMessageController extends Controller
             $contact = $message->contact;
             if ($contact) {
                 $this->sendWhatsAppFeedback($contact, $message);
+                event(new \App\Events\NewInvitationMessage($message));
             }
         }
 
