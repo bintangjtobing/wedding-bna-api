@@ -1,4 +1,3 @@
-// resources/views/websockets.blade.php
 <!DOCTYPE html>
 <html>
 
