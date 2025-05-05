@@ -278,4 +278,25 @@ class InvitationMessageController extends Controller
             'message' => 'Pesan berhasil dihapus.',
         ]);
     }
+    public function testBroadcast()
+    {
+        // Buat data dummy untuk mengirimkan ke event
+        $invitationMessage = InvitationMessage::create([
+            'username' => 'bahari',
+            'name' => 'Bahari',
+            'message' => 'Hello, this is a test message!',
+            'attendance' => 'hadir',
+            'is_approved' => true
+        ]);
+
+        // Trigger event ke Pusher
+        event(new \App\Events\NewInvitationMessage($invitationMessage));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Broadcast event sent successfully!',
+            'data' => $invitationMessage
+        ], 200);
+    }
+
 }

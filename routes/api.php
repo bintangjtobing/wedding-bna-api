@@ -34,6 +34,7 @@ Route::get('/invitation/messages/all', function() {
         'data' => $messages
     ]);
 });
+Route::post('/test-broadcast', [InvitationMessageController::class, 'testBroadcast']);
 Route::get('/invitation/{username}/messages', [App\Http\Controllers\Api\InvitationMessageController::class, 'getMessagesByUsername']);
 
 
