@@ -136,4 +136,20 @@ class Contact extends Model
 
         return str_replace(array_keys($replacements), array_values($replacements), $message);
     }
+    /**
+     * Get the click logs for this contact
+     */
+    public function clickLogs()
+    {
+        return $this->hasMany(\App\Models\ClickLog::class);
+    }
+
+    /**
+     * Get click statistics for this contact
+     */
+    public function getClickStatsAttribute()
+    {
+        $clickLogService = app(\App\Services\ClickLogService::class);
+        return $clickLogService->getClickStats($this);
+    }
 }

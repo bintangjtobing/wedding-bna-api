@@ -31,4 +31,19 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | IPGeolocation API Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure the API key for IPGeolocation service
+    | Sign up at https://ipgeolocation.io/ to get your API key
+    |
+    */
+
+    'ipgeolocation' => [
+        'api_key' => env('IPGEOLOCATION_API_KEY'),
+    ],
+
 ];

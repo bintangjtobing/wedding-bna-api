@@ -574,7 +574,7 @@ class ContactController extends Controller
             'message' => 'Kontak berhasil dihapus.'
         ]);
     }
-    public function apiGetContactByUsername($username)
+    public function apiGetContactByUsername($username, Request $request)
     {
         $contact = Contact::where('username', $username)->first();
 
@@ -583,6 +583,18 @@ class ContactController extends Controller
                 'status' => 'error',
                 'message' => 'Contact not found',
             ], 404);
+        }
+
+        // Log click tracking
+        try {
+            $clickLogService = app(\App\Services\ClickLogService::class);
+            $clickLogService->logClick($contact, $request);
+        } catch (\Exception $e) {
+            // Don't fail the main request if click logging fails
+            \Log::warning('Click logging failed', [
+                'username' => $username,
+                'error' => $e->getMessage()
+            ]);
         }
 
         // Hilangkan informasi sensitif

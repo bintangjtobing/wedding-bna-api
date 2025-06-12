@@ -72,5 +72,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::patch('/invitation/messages/{message}', [App\Http\Controllers\Api\InvitationMessageController::class, 'updateApprovalStatus']);
     Route::delete('/invitation/messages/{message}', [App\Http\Controllers\Api\InvitationMessageController::class, 'destroy']);
-
+    Route::prefix('analytics')->group(function () {
+        Route::get('/stats', [App\Http\Controllers\Api\ClickLogController::class, 'getOverallStats']);
+        Route::get('/contact/{contactId}/clicks', [App\Http\Controllers\Api\ClickLogController::class, 'getContactClickLogs']);
+        Route::get('/recent-activities', [App\Http\Controllers\Api\ClickLogController::class, 'getRecentActivities']);
+        Route::get('/date-range', [App\Http\Controllers\Api\ClickLogController::class, 'getAnalyticsByDateRange']);
+    });
 });
