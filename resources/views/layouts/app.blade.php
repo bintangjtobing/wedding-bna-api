@@ -32,6 +32,11 @@
                         <a class="nav-link" href="{{ route('templates.index') }}">Template Pesan</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ route('analytics.index') }}">
+                            <i class="bi bi-bar-chart"></i> Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ route('invitation_messages.index') }}">
                             Ucapan & Doa
                             @php

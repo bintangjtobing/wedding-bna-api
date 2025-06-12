@@ -49,4 +49,7 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/laravel-websockets', function() {
         return view('websockets');
     });
+    Route::get('/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('/analytics/contact/{contact}', [App\Http\Controllers\AnalyticsController::class, 'contactDetail'])->name('analytics.contact');
+    Route::get('/analytics/export', [App\Http\Controllers\AnalyticsController::class, 'export'])->name('analytics.export');
 });

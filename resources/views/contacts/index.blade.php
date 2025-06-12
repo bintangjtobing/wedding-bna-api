@@ -89,6 +89,7 @@
                         <th>Nomor Telepon</th>
                         <th>Status Undangan</th>
                         <th>Waktu Kirim</th>
+                        <th>Analytics</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -118,7 +119,31 @@
                             @endif
                         </td>
                         <td>
+                            @php
+                            $clickCount = $contact->clickLogs()->count();
+                            $uniqueVisitors = $contact->clickLogs()->distinct('ip_address')->count();
+                            $latestClick = $contact->clickLogs()->latest('clicked_at')->first();
+                            @endphp
+
+                            @if($clickCount > 0)
+                            <div class="small">
+                                <strong class="text-primary">{{ $clickCount }}</strong> clicks<br>
+                                <span class="text-success">{{ $uniqueVisitors }}</span> visitors
+                                @if($latestClick)
+                                <br><small class="text-muted">Last: {{ $latestClick->clicked_at->diffForHumans()
+                                    }}</small>
+                                @endif
+                            </div>
+                            @else
+                            <span class="text-muted small">No clicks</span>
+                            @endif
+                        </td>
+                        <td>
                             <div class="btn-group">
+                                <a href="{{ route('contacts.show', $contact) }}" class="btn btn-sm btn-info"
+                                    title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
                                 <a href="{{ route('contacts.edit', $contact) }}" class="btn btn-sm btn-warning">Edit</a>
                                 <a href="#" class="btn btn-sm btn-outline-warning"
                                     onclick="event.preventDefault(); document.getElementById('reset-form-{{ $contact->id }}').submit();">

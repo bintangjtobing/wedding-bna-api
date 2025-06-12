@@ -80,6 +80,86 @@
                 </div>
             </div>
         </div>
+
+        <!-- Click Analytics Section -->
+        @php
+        $clickStats = $contact->click_stats;
+        @endphp
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Click Analytics</h5>
+            </div>
+            <div class="card-body">
+                @if($clickStats['total_clicks'] > 0)
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="text-primary">{{ $clickStats['total_clicks'] }}</h3>
+                            <p class="mb-0">Total Clicks</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="text-success">{{ $clickStats['unique_ips'] }}</h3>
+                            <p class="mb-0">Unique Visitors</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="text-info">{{ $clickStats['countries'] }}</h3>
+                            <p class="mb-0">Countries</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="text-warning">{{ $clickStats['cities'] }}</h3>
+                            <p class="mb-0">Cities</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>First Click:</strong>
+                        @if($clickStats['first_click'])
+                        {{ \Carbon\Carbon::parse($clickStats['first_click'])->format('d M Y H:i:s') }}
+                        @else
+                        -
+                        @endif
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Last Click:</strong>
+                        @if($clickStats['last_click'])
+                        {{ \Carbon\Carbon::parse($clickStats['last_click'])->format('d M Y H:i:s') }}
+                        @else
+                        -
+                        @endif
+                    </div>
+                </div>
+
+                @if(count($clickStats['top_countries']) > 0)
+                <div class="mb-3">
+                    <h6>Top Countries:</h6>
+                    @foreach($clickStats['top_countries'] as $country => $count)
+                    <span class="badge bg-secondary me-1">{{ $country }}: {{ $count }}</span>
+                    @endforeach
+                </div>
+                @endif
+
+                @if(count($clickStats['top_cities']) > 0)
+                <div class="mb-3">
+                    <h6>Top Cities:</h6>
+                    @foreach($clickStats['top_cities'] as $city => $count)
+                    <span class="badge bg-info me-1">{{ $city }}: {{ $count }}</span>
+                    @endforeach
+                </div>
+                @endif
+                @else
+                <p class="text-center text-muted">Belum ada aktivitas click untuk kontak ini.</p>
+                @endif
+            </div>
+        </div>
     </div>
 
     <div class="col-md-4">
@@ -128,6 +208,80 @@
                 <p>WhatsApp: <strong>{{ $contact->admin->whatsapp_number }}</strong></p>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Click Logs Detail -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">Riwayat Click Activities</h5>
+    </div>
+    <div class="card-body">
+        @php
+        $clickLogs = $contact->clickLogs()->orderBy('clicked_at', 'desc')->limit(20)->get();
+        @endphp
+
+        @if($clickLogs->isEmpty())
+        <p class="text-center">Belum ada riwayat click untuk kontak ini.</p>
+        @else
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Waktu</th>
+                        <th>IP Address</th>
+                        <th>Location</th>
+                        <th>Device</th>
+                        <th>Browser</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($clickLogs as $log)
+                    <tr>
+                        <td>{{ $log->clicked_at->format('d M Y H:i:s') }}</td>
+                        <td><code>{{ $log->ip_address }}</code></td>
+                        <td>
+                            @if($log->country)
+                            {{ $log->country_emoji }} {{ $log->city }}, {{ $log->country }}
+                            @if($log->region)
+                            <br><small class="text-muted">{{ $log->region }}</small>
+                            @endif
+                            @else
+                            <span class="text-muted">Unknown</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($log->device_name)
+                            {{ $log->device_name }}
+                            @if($log->device_brand)
+                            <br><small class="text-muted">{{ $log->device_brand }} {{ $log->device_type }}</small>
+                            @endif
+                            @else
+                            <span class="text-muted">Unknown</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($log->browser_name)
+                            {{ $log->browser_name }}
+                            @if($log->os_name)
+                            <br><small class="text-muted">{{ $log->os_name }}</small>
+                            @endif
+                            @else
+                            <span class="text-muted">Unknown</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @if($contact->clickLogs()->count() > 20)
+        <div class="text-center mt-3">
+            <small class="text-muted">Menampilkan 20 aktivitas terbaru dari {{ $contact->clickLogs()->count() }} total
+                click</small>
+        </div>
+        @endif
+        @endif
     </div>
 </div>
 

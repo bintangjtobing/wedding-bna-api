@@ -12,7 +12,7 @@
 </div>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card mb-4">
             <div class="card-header">Kontak Saya</div>
             <div class="card-body">
@@ -24,7 +24,28 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-header">Click Analytics</div>
+            <div class="card-body">
+                <h3 class="text-primary">{{ number_format($clickAnalytics['total_clicks']) }}</h3>
+                <p class="card-text mb-1">Total Clicks</p>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <small class="text-muted">Unique Visitors</small>
+                        <div class="fw-bold text-success">{{ number_format($clickAnalytics['unique_visitors']) }}</div>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted">Countries</small>
+                        <div class="fw-bold text-info">{{ $clickAnalytics['countries_reached'] }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
         <div class="card mb-4">
             <div class="card-header">Status Undangan Saya</div>
             <div class="card-body">
@@ -52,13 +73,13 @@
                 </div>
                 <div class="row text-center my-2">
                     <div class="col">
-                        <span class="badge bg-success">Terkirim: {{ $sentInvitations }}</span>
+                        <span class="badge bg-success">{{ $sentInvitations }}</span>
                     </div>
                     <div class="col">
-                        <span class="badge bg-warning">Belum Dikirim: {{ $pendingInvitations }}</span>
+                        <span class="badge bg-warning">{{ $pendingInvitations }}</span>
                     </div>
                     <div class="col">
-                        <span class="badge bg-danger">Gagal: {{ $failedInvitations }}</span>
+                        <span class="badge bg-danger">{{ $failedInvitations }}</span>
                     </div>
                 </div>
                 <div class="d-grid gap-2 mt-3">
@@ -67,7 +88,8 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+
+    <div class="col-md-3">
         <div class="card mb-4">
             <div class="card-header">Statistik Kontak</div>
             <div class="card-body">
@@ -87,7 +109,7 @@
                         </div>
                         <div class="progress-bar bg-warning" role="progressbar"
                             style="width: {{ $groomPendingPercentage }}%" aria-valuenow="{{ $groomPendingPercentage }}"
-                            aria-valuemin="0" aria-valuemax="100">
+                            aria-valuemin="0" aria-valuemin="0" aria-valuemax="100">
                             {{ $groomPendingCount }}
                         </div>
                         <div class="progress-bar bg-danger" role="progressbar"
@@ -96,6 +118,7 @@
                             {{ $groomFailedCount }}
                         </div>
                     </div>
+                    <small class="text-muted">{{ $groomClicks }} clicks, {{ $groomUniqueVisitors }} visitors</small>
                 </div>
 
                 <div class="mb-3">
@@ -123,6 +146,7 @@
                             {{ $brideFailedCount }}
                         </div>
                     </div>
+                    <small class="text-muted">{{ $brideClicks }} clicks, {{ $brideUniqueVisitors }} visitors</small>
                 </div>
 
                 <div class="mt-3">
@@ -131,16 +155,12 @@
                         <strong>{{ $groomContactCount + $brideContactCount }}</strong>
                     </div>
                     <div class="d-flex justify-content-between">
+                        <span>Total Clicks:</span>
+                        <strong>{{ $totalClicks }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
                         <span>Total Terkirim:</span>
                         <strong>{{ $groomSentCount + $brideSentCount }}</strong>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Total Belum Dikirim:</span>
-                        <strong>{{ $groomPendingCount + $bridePendingCount }}</strong>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Total Gagal:</span>
-                        <strong>{{ $groomFailedCount + $brideFailedCount }}</strong>
                     </div>
                 </div>
             </div>
@@ -148,7 +168,132 @@
     </div>
 </div>
 
-<!-- Menambahkan grafik status pengiriman undangan terbaru -->
+<!-- Click Analytics Section -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Top Countries Reached</h5>
+            </div>
+            <div class="card-body">
+                @if($clickAnalytics['top_countries']->count() > 0)
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Country</th>
+                                <th>Clicks</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($clickAnalytics['top_countries'] as $country => $count)
+                            <tr>
+                                <td>{{ $country }}</td>
+                                <td>{{ $count }}</td>
+                                <td>
+                                    <div class="progress" style="height: 15px;">
+                                        <div class="progress-bar bg-info"
+                                            style="width: {{ ($count / $clickAnalytics['total_clicks']) * 100 }}%">
+                                        </div>
+                                    </div>
+                                    {{ round(($count / $clickAnalytics['total_clicks']) * 100, 1) }}%
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @else
+                <p class="text-center text-muted">Belum ada data click</p>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Device Breakdown</h5>
+            </div>
+            <div class="card-body">
+                @if($clickAnalytics['device_breakdown']->count() > 0)
+                <div class="row">
+                    @foreach($clickAnalytics['device_breakdown'] as $device => $count)
+                    <div class="col-6 mb-3">
+                        <div class="text-center">
+                            <h4 class="text-primary">{{ $count }}</h4>
+                            <p class="mb-0">{{ $device }}</p>
+                            <small class="text-muted">{{ round(($count / $clickAnalytics['total_clicks']) * 100, 1)
+                                }}%</small>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <p class="text-center text-muted">Belum ada data device</p>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activities -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Click Activities</h5>
+            </div>
+            <div class="card-body">
+                @if($clickAnalytics['recent_clicks']->count() > 0)
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Contact</th>
+                                <th>Location</th>
+                                <th>Device</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($clickAnalytics['recent_clicks'] as $click)
+                            <tr>
+                                <td>
+                                    <strong>{{ $click->name }}</strong><br>
+                                    <small class="text-muted">{{ $click->username }}</small>
+                                </td>
+                                <td>
+                                    @if($click->country)
+                                    {{ $click->country_emoji }} {{ $click->city }}, {{ $click->country }}
+                                    @else
+                                    <span class="text-muted">Unknown</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($click->device_name)
+                                    {{ $click->device_name }}<br>
+                                    <small class="text-muted">{{ $click->os_name }} • {{ $click->browser_name }}</small>
+                                    @else
+                                    <span class="text-muted">Unknown</span>
+                                    @endif
+                                </td>
+                                <td>{{ $click->clicked_at->diffForHumans() }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @else
+                <p class="text-center text-muted">Belum ada aktivitas click</p>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Status Pengiriman Undangan -->
 <div class="row">
     <div class="col-md-12">
         <div class="card mb-4">
@@ -219,3 +364,4 @@
         </div>
     </div>
 </div>
+@endsection
