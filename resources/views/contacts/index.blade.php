@@ -119,19 +119,13 @@
                             @endif
                         </td>
                         <td>
-                            @php
-                            $clickCount = $contact->clickLogs()->count();
-                            $uniqueVisitors = $contact->clickLogs()->distinct('ip_address')->count();
-                            $latestClick = $contact->clickLogs()->latest('clicked_at')->first();
-                            @endphp
-
-                            @if($clickCount > 0)
+                            @if($contact->click_logs_count > 0)
                             <div class="small">
-                                <strong class="text-primary">{{ $clickCount }}</strong> clicks<br>
-                                <span class="text-success">{{ $uniqueVisitors }}</span> visitors
-                                @if($latestClick)
-                                <br><small class="text-muted">Last: {{ $latestClick->clicked_at->diffForHumans()
-                                    }}</small>
+                                <strong class="text-primary">{{ $contact->click_logs_count }}</strong> clicks<br>
+                                <span class="text-success">{{ $contact->unique_visitors_count }}</span> visitors
+                                @if($contact->latest_click)
+                                <br><small class="text-muted">Last: {{
+                                    $contact->latest_click->clicked_at->diffForHumans() }}</small>
                                 @endif
                             </div>
                             @else
@@ -168,8 +162,16 @@
             </table>
         </div>
 
-        <div class="d-flex justify-content-center mt-4">
-            {{ $contacts->appends(request()->query())->links() }}
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+                <p class="text-muted mb-0">
+                    Showing {{ $contacts->firstItem() ?? 0 }} to {{ $contacts->lastItem() ?? 0 }}
+                    of {{ $contacts->total() }} results
+                </p>
+            </div>
+            <div>
+                {{ $contacts->appends(request()->input())->links() }}
+            </div>
         </div>
         @endif
     </div>

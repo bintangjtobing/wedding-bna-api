@@ -152,4 +152,19 @@ class Contact extends Model
         $clickLogService = app(\App\Services\ClickLogService::class);
         return $clickLogService->getClickStats($this);
     }
+    /**
+     * Get latest click log
+     */
+    public function getLatestClickAttribute()
+    {
+        return $this->clickLogs()->latest('clicked_at')->first();
+    }
+
+    /**
+     * Get unique visitors count
+     */
+    public function getUniqueVisitorsCountAttribute()
+    {
+        return $this->clickLogs()->distinct('ip_address')->count();
+    }
 }

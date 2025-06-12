@@ -23,11 +23,20 @@ class ContactController extends Controller
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('phone_number', 'like', "%{$search}%");
+                  ->orWhere('phone_number', 'like', "%{$search}%")
+                  ->orWhere('username', 'like', "%{$search}%");
             });
         }
 
-        $contacts = $query->latest()->paginate(20);
+        // Eager load click logs untuk performance
+        $query->withCount('clickLogs');
+
+        // Urutkan berdasarkan yang terbaru
+        $query->latest();
+
+        // Paginasi dengan parameter yang di-preserve
+        $contacts = $query->paginate(20)->appends($request->all());
+
         return view('contacts.index', compact('contacts'));
     }
     public function show(Contact $contact)
