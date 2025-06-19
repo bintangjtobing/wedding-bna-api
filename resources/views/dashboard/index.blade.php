@@ -30,7 +30,7 @@
                     </div>
                     <div class="col-4 text-end">
                         <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                            <i class="ni ni-satisfied text-lg opacity-10" aria-hidden="true"></i>
+                            <i class="fas fa-satisfied text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                     </div>
                     <div class="col-4 text-end">
                         <div class="icon icon-shape bg-gradient-dark shadow text-center border-radius-md">
-                            <i class="ni ni-single-02 text-lg opacity-10" aria-hidden="true"></i>
+                            <i class="fas fa-single-02 text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                     </div>
                     <div class="col-4 text-end">
                         <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                            <i class="ni ni-chart-bar-32 text-lg opacity-10" aria-hidden="true"></i>
+                            <i class="fas fa-chart-bar-32 text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
                     </div>
                     <div class="col-4 text-end">
                         <div class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
-                            <i class="ni ni-world text-lg opacity-10" aria-hidden="true"></i>
+                            <i class="fas fa-world text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@
                     </div>
                     <div class="col-4 text-end">
                         <div class="icon icon-shape bg-gradient-warning shadow text-center border-radius-md">
-                            <i class="ni ni-pin-3 text-lg opacity-10" aria-hidden="true"></i>
+                            <i class="fas fa-pin-3 text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -338,10 +338,10 @@
                                 @else bg-gradient-secondary @endif
                                 text-center border-radius-sm">
                                 <i class="
-                                    @if($device == 'mobile') ni ni-mobile-button
-                                    @elseif($device == 'desktop') ni ni-tv-2
-                                    @elseif($device == 'tablet') ni ni-tablet-button
-                                    @else ni ni-controller @endif
+                                    @if($device == 'mobile') fas fa-mobile-button
+                                    @elseif($device == 'desktop') fas fa-tv-2
+                                    @elseif($device == 'tablet') fas fa-tablet-button
+                                    @else fas fa-controller @endif
                                     text-white text-xs opacity-10" aria-hidden="true"></i>
                             </div>
                             <div>
@@ -404,7 +404,8 @@
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
                                             <h6 class="mb-0 text-sm">{{ $click->name }}</h6>
-                                            <p class="text-xs text-secondary mb-0">@{{ $click->username }}</p>
+                                            <p class="text-xs text-secondary mb-0">{{ '@' . ($click->username ??
+                                                'no-username') }}</p>
                                         </div>
                                     </div>
                                 </td>

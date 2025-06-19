@@ -33,7 +33,21 @@ class DashboardController extends Controller
             'unique_visitors' => $clickLogs->unique('ip_address')->count(),
             'countries_reached' => $clickLogs->whereNotNull('country')->unique('country')->count(),
             'cities_reached' => $clickLogs->whereNotNull('city')->unique('city')->count(),
-            'recent_clicks' => $clickLogs->sortByDesc('clicked_at')->take(5),
+            'recent_clicks' => $clickLogs->sortByDesc('clicked_at')->take(5)->map(function($log) {
+                return (object) [
+                    'name' => $log->name,
+                    'username' => $log->username ?? 'guest',
+                    'contact_id' => $log->contact_id,
+                    'country' => $log->country,
+                    'city' => $log->city,
+                    'country_emoji' => $log->country_emoji,
+                    'ip_address' => $log->ip_address,
+                    'device_name' => $log->device_name,
+                    'device_type' => $log->device_type,
+                    'browser_name' => $log->browser_name,
+                    'clicked_at' => $log->clicked_at,
+                ];
+            }),
             'top_countries' => $clickLogs->whereNotNull('country')
                 ->groupBy('country')
                 ->map->count()

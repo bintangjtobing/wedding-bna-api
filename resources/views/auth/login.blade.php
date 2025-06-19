@@ -42,7 +42,7 @@
                     <div class="card-header bg-transparent border-0 pb-0 text-center">
                         <div class="text-center mb-4">
                             <div class="icon icon-shape icon-lg bg-gradient-primary shadow mx-auto mb-3">
-                                <i class="ni ni-favourite-28 text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="fas fa-favourite-28 text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                             <h3 class="font-weight-bolder text-primary">Welcome Back!</h3>
                             <p class="text-muted">Sign in to your wedding dashboard</p>
@@ -102,7 +102,7 @@
                                 <label class="form-label font-weight-bold text-dark">Email Address</label>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">
-                                        <i class="ni ni-email-83"></i>
+                                        <i class="fas fa-email-83"></i>
                                     </span>
                                     <input type="email" class="form-control @error('email') is-invalid @enderror"
                                         placeholder="Enter your email" name="email" value="{{ old('email') }}" required
@@ -118,13 +118,13 @@
                                 <label class="form-label font-weight-bold text-dark">Password</label>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">
-                                        <i class="ni ni-lock-circle-open"></i>
+                                        <i class="fas fa-lock-circle-open"></i>
                                     </span>
                                     <input type="password" class="form-control @error('password') is-invalid @enderror"
                                         placeholder="Enter your password" name="password" required
                                         autocomplete="current-password" id="password">
                                     <span class="input-group-text cursor-pointer" onclick="togglePassword()">
-                                        <i class="ni ni-eye-17" id="toggleIcon"></i>
+                                        <i class="fas fa-eye-17" id="toggleIcon"></i>
                                     </span>
                                 </div>
                                 @error('password')
@@ -141,7 +141,7 @@
                             <!-- Submit Button -->
                             <div class="text-center">
                                 <button type="submit" class="btn bg-gradient-primary w-100 my-4 mb-2">
-                                    <i class="ni ni-button-power me-2"></i>
+                                    <i class="fas fa-button-power me-2"></i>
                                     Sign In
                                 </button>
                             </div>
@@ -169,7 +169,7 @@
                     <div class="col-4">
                         <div class="text-center">
                             <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                <i class="ni ni-send text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="fas fa-send text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                             <h6 class="text-white mt-2 mb-0">Send Invites</h6>
                         </div>
@@ -177,7 +177,7 @@
                     <div class="col-4">
                         <div class="text-center">
                             <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md">
-                                <i class="ni ni-chart-bar-32 text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="fas fa-chart-bar-32 text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                             <h6 class="text-white mt-2 mb-0">Analytics</h6>
                         </div>
@@ -185,7 +185,7 @@
                     <div class="col-4">
                         <div class="text-center">
                             <div class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
-                                <i class="ni ni-single-02 text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="fas fa-single-02 text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                             <h6 class="text-white mt-2 mb-0">Manage Guests</h6>
                         </div>
@@ -207,10 +207,10 @@ function togglePassword() {
 
     if (passwordField.type === 'password') {
         passwordField.type = 'text';
-        toggleIcon.className = 'ni ni-eye-off';
+        toggleIcon.className = 'fas fa-eye-off';
     } else {
         passwordField.type = 'password';
-        toggleIcon.className = 'ni ni-eye-17';
+        toggleIcon.className = 'fas fa-eye-17';
     }
 }
 
@@ -227,7 +227,7 @@ document.querySelector('form').addEventListener('submit', function() {
     const submitBtn = this.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
 
-    submitBtn.innerHTML = '<i class="ni ni-settings-gear-65 me-2"></i>Signing In...';
+    submitBtn.innerHTML = '<i class="fas fa-settings-gear-65 me-2"></i>Signing In...';
     submitBtn.disabled = true;
 
     // Re-enable if form submission fails (e.g., validation errors)
