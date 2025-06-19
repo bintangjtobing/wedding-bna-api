@@ -15,6 +15,9 @@ class ContactController extends Controller
     {
         $this->clickLogService = $clickLogService;
     }
+    /**
+     * Display contacts with mobile-first responsive design
+     */
     public function index(Request $request)
     {
         $admin = Auth::guard('admin')->user();
@@ -23,6 +26,15 @@ class ContactController extends Controller
         // Filter berdasarkan status undangan jika ada
         if ($request->has('status') && in_array($request->status, ['belum_dikirim', 'terkirim', 'gagal'])) {
             $query->where('invitation_status', $request->status);
+        }
+
+        // Filter berdasarkan negara jika ada
+        if ($request->has('country') && !empty($request->country)) {
+            if ($request->country === 'OTHER') {
+                $query->whereNotIn('country', ['ID', 'MY', 'SG', 'US']);
+            } else {
+                $query->where('country', $request->country);
+            }
         }
 
         // Pencarian kontak
@@ -44,7 +56,106 @@ class ContactController extends Controller
         // Paginasi dengan parameter yang di-preserve
         $contacts = $query->paginate(20)->appends($request->all());
 
-        return view('contacts.index', compact('contacts'));
+        // Statistik untuk card summary
+        $stats = [
+            'total' => $admin->contacts()->count(),
+            'terkirim' => $admin->contacts()->where('invitation_status', 'terkirim')->count(),
+            'belum_dikirim' => $admin->contacts()->where('invitation_status', 'belum_dikirim')->count(),
+            'gagal' => $admin->contacts()->where('invitation_status', 'gagal')->count(),
+
+            // Country breakdown
+            'countries' => [
+                'ID' => $admin->contacts()->where('country', 'ID')->count(),
+                'MY' => $admin->contacts()->where('country', 'MY')->count(),
+                'SG' => $admin->contacts()->where('country', 'SG')->count(),
+                'OTHER' => $admin->contacts()->whereNotIn('country', ['ID', 'MY', 'SG', 'US'])->count(),
+            ]
+        ];
+
+        return view('contacts.index', compact('contacts', 'stats'));
+    }
+
+    /**
+     * Display contact analytics dashboard
+     */
+    public function analytics(Request $request)
+    {
+        $admin = Auth::guard('admin')->user();
+
+        // Get contacts with click analytics
+        $contactsWithClicks = $admin->contacts()
+            ->withCount('clickLogs')
+            ->with(['clickLogs' => function($query) {
+                $query->select('contact_id', 'ip_address', 'country', 'city', 'device_type', 'clicked_at')
+                      ->orderBy('clicked_at', 'desc');
+            }])
+            ->having('click_logs_count', '>', 0)
+            ->orderByDesc('click_logs_count')
+            ->get();
+
+        // Overall analytics
+        $contactIds = $admin->contacts()->pluck('id');
+        $allClickLogs = \App\Models\ClickLog::whereIn('contact_id', $contactIds)->get();
+
+        $analytics = [
+            'total_clicks' => $allClickLogs->count(),
+            'unique_visitors' => $allClickLogs->unique('ip_address')->count(),
+            'countries_reached' => $allClickLogs->whereNotNull('country')->unique('country')->count(),
+            'cities_reached' => $allClickLogs->whereNotNull('city')->unique('city')->count(),
+
+            // Time-based stats
+            'today_clicks' => $allClickLogs->where('clicked_at', '>=', now()->startOfDay())->count(),
+            'week_clicks' => $allClickLogs->where('clicked_at', '>=', now()->startOfWeek())->count(),
+            'month_clicks' => $allClickLogs->where('clicked_at', '>=', now()->startOfMonth())->count(),
+
+            // Top countries
+            'top_countries' => $allClickLogs->whereNotNull('country')
+                ->groupBy('country')
+                ->map->count()
+                ->sortDesc()
+                ->take(5),
+
+            // Device breakdown
+            'device_breakdown' => $allClickLogs->whereNotNull('device_type')
+                ->groupBy('device_type')
+                ->map->count()
+                ->sortDesc(),
+
+            // Recent activities
+            'recent_activities' => $allClickLogs->sortByDesc('clicked_at')->take(10),
+        ];
+
+        return view('contacts.analytics', compact('analytics', 'contactsWithClicks'));
+    }
+
+    /**
+     * Display contact management tools
+     */
+    public function manage(Request $request)
+    {
+        $admin = Auth::guard('admin')->user();
+
+        // Get summary stats
+        $stats = [
+            'total_contacts' => $admin->contacts()->count(),
+            'pending_invitations' => $admin->contacts()->where('invitation_status', 'belum_dikirim')->count(),
+            'sent_invitations' => $admin->contacts()->where('invitation_status', 'terkirim')->count(),
+            'failed_invitations' => $admin->contacts()->where('invitation_status', 'gagal')->count(),
+        ];
+
+        // Get recent import/export activities (jika ada log table)
+        $recentActivities = collect([
+            // Bisa ditambahkan log activities nanti
+        ]);
+
+        // Get failed contacts for retry
+        $failedContacts = $admin->contacts()
+            ->where('invitation_status', 'gagal')
+            ->orderBy('updated_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        return view('contacts.manage', compact('stats', 'recentActivities', 'failedContacts'));
     }
     public function show(Contact $contact)
     {

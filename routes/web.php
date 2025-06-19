@@ -22,7 +22,12 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Route untuk kontak
+    // Route untuk kontak - UPDATED dengan method baru
     Route::resource('contacts', ContactController::class);
+
+    // Route tambahan untuk kontak analytics dan management
+    Route::get('/contacts-analytics', [ContactController::class, 'analytics'])->name('contacts.analytics');
+    Route::get('/contacts-manage', [ContactController::class, 'manage'])->name('contacts.manage');
 
     // Route untuk pesan
     Route::get('/messages/create', [MessageController::class, 'create'])->name('messages.create');
