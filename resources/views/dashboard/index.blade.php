@@ -1,3 +1,5 @@
+@extends('layouts.app')
+
 @section('title', 'Dashboard - Wedding Invitation')
 @section('breadcrumb', 'Dashboard')
 @section('page-title', 'Dashboard')
