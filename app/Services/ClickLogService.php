@@ -184,6 +184,10 @@ class ClickLogService
                 'unique_ips' => 0,
                 'countries' => 0,
                 'cities' => 0,
+                'continents' => 0,
+                'zip_codes' => 0,
+                'avg_latitude' => 'N/A',
+                'avg_longitude' => 'N/A',
                 'first_click' => null,
                 'last_click' => null,
                 'today_clicks' => 0,
@@ -198,6 +202,8 @@ class ClickLogService
                 'mobile_percentage' => 0,
                 'top_countries' => [],
                 'top_cities' => [],
+                'top_continents' => [],
+                'top_regions' => [],
                 'top_devices' => [],
                 'browsers' => [],
             ];
@@ -224,6 +230,10 @@ class ClickLogService
             'unique_ips' => $logs->unique('ip_address')->count(),
             'countries' => $logs->whereNotNull('country')->unique('country')->count(),
             'cities' => $logs->whereNotNull('city')->unique('city')->count(),
+            'continents' => $logs->whereNotNull('continent')->unique('continent')->count(),
+            'zip_codes' => $logs->whereNotNull('zipcode')->unique('zipcode')->count(),
+            'avg_latitude' => $logs->whereNotNull('latitude')->avg('latitude') ? number_format($logs->whereNotNull('latitude')->avg('latitude'), 4) : 'N/A',
+            'avg_longitude' => $logs->whereNotNull('longitude')->avg('longitude') ? number_format($logs->whereNotNull('longitude')->avg('longitude'), 4) : 'N/A',
             'first_click' => $logs->min('clicked_at'),
             'last_click' => $logs->max('clicked_at'),
             'today_clicks' => $logs->where('clicked_at', '>=', $today)->count(),
@@ -239,6 +249,17 @@ class ClickLogService
                 ->toArray(),
             'top_cities' => $logs->whereNotNull('city')
                 ->groupBy('city')
+                ->map->count()
+                ->sortDesc()
+                ->take(5)
+                ->toArray(),
+            'top_continents' => $logs->whereNotNull('continent')
+                ->groupBy('continent')
+                ->map->count()
+                ->sortDesc()
+                ->toArray(),
+            'top_regions' => $logs->whereNotNull('region')
+                ->groupBy('region')
                 ->map->count()
                 ->sortDesc()
                 ->take(5)

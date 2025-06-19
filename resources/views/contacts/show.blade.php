@@ -90,7 +90,7 @@
             <div class="card-body">
                 @if(isset($clickStats) && $clickStats['total_clicks'] > 0)
                 <!-- Primary Stats Row -->
-                <div class="row mb-4">
+                <div class="row mb-3">
                     <div class="col-md-3">
                         <div class="text-center p-3 bg-primary bg-opacity-10 rounded">
                             <h3 class="text-primary mb-1">{{ $clickStats['total_clicks'] }}</h3>
@@ -113,6 +113,34 @@
                         <div class="text-center p-3 bg-warning bg-opacity-10 rounded">
                             <h3 class="text-warning mb-1">{{ $clickStats['cities'] }}</h3>
                             <p class="mb-0 small">Cities</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Geo Stats Row -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="text-center p-2 bg-dark bg-opacity-10 rounded">
+                            <h4 class="text-dark mb-1">{{ $clickStats['continents'] ?? 0 }}</h4>
+                            <p class="mb-0 small">Continents</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-2 bg-light rounded">
+                            <h4 class="text-secondary mb-1">{{ $clickStats['zip_codes'] ?? 0 }}</h4>
+                            <p class="mb-0 small">Zip Codes</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-2 border rounded">
+                            <h5 class="text-secondary mb-1">{{ $clickStats['avg_latitude'] ?? 'N/A' }}</h5>
+                            <p class="mb-0 small">Avg Latitude</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-2 border rounded">
+                            <h5 class="text-secondary mb-1">{{ $clickStats['avg_longitude'] ?? 'N/A' }}</h5>
+                            <p class="mb-0 small">Avg Longitude</p>
                         </div>
                     </div>
                 </div>
@@ -197,6 +225,30 @@
                         @endif
                     </div>
                 </div>
+
+                <!-- Top Continents -->
+                @if(isset($clickStats['top_continents']) && count($clickStats['top_continents']) > 0)
+                <div class="mb-3">
+                    <h6>🌎 Top Continents:</h6>
+                    <div class="d-flex flex-wrap gap-1">
+                        @foreach($clickStats['top_continents'] as $continent => $count)
+                        <span class="badge bg-primary">{{ $continent }}: {{ $count }}</span>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <!-- Top Regions -->
+                @if(isset($clickStats['top_regions']) && count($clickStats['top_regions']) > 0)
+                <div class="mb-3">
+                    <h6>🗺️ Top Regions:</h6>
+                    <div class="d-flex flex-wrap gap-1">
+                        @foreach($clickStats['top_regions'] as $region => $count)
+                        <span class="badge bg-secondary">{{ $region }}: {{ $count }}</span>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
 
                 <!-- Top Countries -->
                 @if(isset($clickStats['top_countries']) && count($clickStats['top_countries']) > 0)
@@ -355,6 +407,16 @@
                                 <small class="text-muted">{{ $log->country }}</small>
                                 @if($log->region)
                                 <br><small class="text-muted">{{ $log->region }}</small>
+                                @endif
+                                @if($log->continent)
+                                <br><small class="text-info">{{ $log->continent }}</small>
+                                @endif
+                                @if($log->latitude && $log->longitude)
+                                <br><small class="text-success">📍 {{ number_format($log->latitude, 4) }}, {{
+                                    number_format($log->longitude, 4) }}</small>
+                                @endif
+                                @if($log->zipcode)
+                                <br><small class="text-warning">📮 {{ $log->zipcode }}</small>
                                 @endif
                             </div>
                             @else
