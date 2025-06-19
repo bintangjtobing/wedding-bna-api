@@ -95,26 +95,38 @@ class AnalyticsController extends Controller
             abort(403, 'Unauthorized access to this contact.');
         }
 
+        // Get detailed stats using ClickLogService
         $stats = $this->clickLogService->getClickStats($contact);
+
+        // Get paginated logs
         $logs = $contact->clickLogs()->orderBy('clicked_at', 'desc')->paginate(50);
 
-        // Additional analytics
+        // Additional analytics for charts
         $dailyClicks = $contact->clickLogs()
             ->selectRaw('DATE(clicked_at) as date, COUNT(*) as count')
             ->groupBy('date')
             ->orderBy('date', 'desc')
             ->limit(30)
             ->get()
-            ->pluck('count', 'date');
+            ->pluck('count', 'date')
+            ->reverse(); // Reverse to show chronological order
 
+        // Location breakdown for table
         $locationBreakdown = $contact->clickLogs()
             ->whereNotNull('country')
             ->selectRaw('country, city, COUNT(*) as count')
             ->groupBy('country', 'city')
             ->orderBy('count', 'desc')
+            ->limit(20)
             ->get();
 
-        return view('analytics.contact', compact('contact', 'stats', 'logs', 'dailyClicks', 'locationBreakdown'));
+        return view('analytics.contact', compact(
+            'contact',
+            'stats',
+            'logs',
+            'dailyClicks',
+            'locationBreakdown'
+        ));
     }
 
     /**
