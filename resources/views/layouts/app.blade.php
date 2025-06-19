@@ -18,7 +18,7 @@
 
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ asset('css/soft-ui-dashboard.min.css') }}" rel="stylesheet" />
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @stack('styles')
 </head>
 
@@ -47,7 +47,7 @@
                         href="{{ route('dashboard') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-tv-2 text-primary text-sm opacity-10"></i>
+                            <i class="fas fa-tachometer-alt text-primary text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Dashboard</span>
                     </a>
@@ -59,7 +59,7 @@
                         href="{{ route('contacts.index') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-single-02 text-warning text-sm opacity-10"></i>
+                            <i class="fas fa-address-book text-warning text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Kontak</span>
                     </a>
@@ -71,7 +71,7 @@
                         href="{{ route('messages.create') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-email-83 text-success text-sm opacity-10"></i>
+                            <i class="fas fa-paper-plane text-success text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Kirim Pesan</span>
                     </a>
@@ -83,7 +83,7 @@
                         href="{{ route('templates.index') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-collection text-info text-sm opacity-10"></i>
+                            <i class="fas fa-file-alt text-info text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Template Pesan</span>
                     </a>
@@ -95,7 +95,7 @@
                         href="{{ route('analytics.index') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-chart-bar-32 text-primary text-sm opacity-10"></i>
+                            <i class="fas fa-chart-bar text-primary text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Analytics</span>
                     </a>
@@ -107,7 +107,7 @@
                         href="{{ route('invitation_messages.index') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-chat-round text-warning text-sm opacity-10"></i>
+                            <i class="fas fa-comments text-warning text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Ucapan & Doa</span>
                         @php
@@ -128,7 +128,7 @@
                     <a class="nav-link" href="#">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-single-02 text-dark text-sm opacity-10"></i>
+                            <i class="fas fa-user text-dark text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Profile</span>
                     </a>
@@ -145,7 +145,7 @@
                 <div class="card-body text-start p-3 w-100">
                     <div
                         class="icon icon-shape icon-sm bg-white text-center mb-3 d-flex align-items-center justify-content-center border-radius-md">
-                        <i class="fas fa-diamond text-dark text-gradient text-lg top-0" aria-hidden="true"
+                        <i class="fas fa-gem text-dark text-gradient text-lg top-0" aria-hidden="true"
                             id="sidenavCardIcon"></i>
                     </div>
                     <div class="docs-info">
@@ -227,7 +227,7 @@
                                         <button type="submit" class="dropdown-item border-radius-md">
                                             <div class="d-flex py-1">
                                                 <div class="my-auto">
-                                                    <i class="fas fa-bold-right text-sm me-3"></i>
+                                                    <i class="fas fa-sign-out-alt text-sm me-3"></i>
                                                 </div>
                                                 <div class="d-flex flex-column justify-content-center">
                                                     <h6 class="text-sm font-weight-normal mb-1">
@@ -301,7 +301,7 @@
             <!-- Alerts -->
             @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <span class="alert-icon"><i class="fas fa-like-2"></i></span>
+                <span class="alert-icon"><i class="fas fa-check"></i></span>
                 <span class="alert-text"><strong>Success!</strong> {{ session('success') }}</span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -309,7 +309,7 @@
 
             @if(session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <span class="alert-icon"><i class="fas fa-support-16"></i></span>
+                <span class="alert-icon"><i class="fas fa-exclamation-triangle"></i></span>
                 <span class="alert-text"><strong>Error!</strong> {{ session('error') }}</span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -317,7 +317,7 @@
 
             @if($errors->any())
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <span class="alert-icon"><i class="fas fa-bell-55"></i></span>
+                <span class="alert-icon"><i class="fas fa-bell"></i></span>
                 <span class="alert-text">
                     <strong>Validation Error!</strong>
                     <ul class="mb-0">

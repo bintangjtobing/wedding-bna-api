@@ -30,7 +30,7 @@
                     </div>
                     <div class="col-4 text-end">
                         <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                            <i class="fas fa-satisfied text-lg opacity-10" aria-hidden="true"></i>
+                            <i class="fas fa-smile text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                     </div>
                     <div class="col-4 text-end">
                         <div class="icon icon-shape bg-gradient-dark shadow text-center border-radius-md">
-                            <i class="fas fa-single-02 text-lg opacity-10" aria-hidden="true"></i>
+                            <i class="fas fa-users text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                     </div>
                     <div class="col-4 text-end">
                         <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                            <i class="fas fa-chart-bar-32 text-lg opacity-10" aria-hidden="true"></i>
+                            <i class="fas fa-mouse-pointer text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
                     </div>
                     <div class="col-4 text-end">
                         <div class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
-                            <i class="fas fa-world text-lg opacity-10" aria-hidden="true"></i>
+                            <i class="fas fa-eye text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@
                     </div>
                     <div class="col-4 text-end">
                         <div class="icon icon-shape bg-gradient-warning shadow text-center border-radius-md">
-                            <i class="fas fa-pin-3 text-lg opacity-10" aria-hidden="true"></i>
+                            <i class="fas fa-globe text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -465,99 +465,64 @@
 
 @push('scripts')
 <script>
+    // Pastikan Chart.js sudah loaded
+document.addEventListener('DOMContentLoaded', function() {
     // Invitation Status Chart
-@if($contactCount > 0)
-var ctx1 = document.getElementById("invitationChart").getContext("2d");
-
-var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
-gradientStroke1.addColorStop(1, 'rgba(203, 12, 159, 0.2)');
-gradientStroke1.addColorStop(0.2, 'rgba(72, 72, 176, 0.0)');
-gradientStroke1.addColorStop(0, 'rgba(203, 12, 159, 0)');
-
-new Chart(ctx1, {
-    type: "doughnut",
-    data: {
-        labels: ['Terkirim', 'Belum Dikirim', 'Gagal'],
-        datasets: [{
-            label: "Status",
-            weight: 9,
-            cutout: 60,
-            tension: 0.9,
-            pointRadius: 2,
-            borderWidth: 2,
-            backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
-            data: [{{ $sentInvitations }}, {{ $pendingInvitations }}, {{ $failedInvitations }}],
-            fill: false
-        }],
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false,
-            }
-        },
-        interaction: {
-            intersect: false,
-            mode: 'index',
-        },
-        scales: {
-            y: {
-                display: false
+    @if($contactCount > 0)
+    var ctx1 = document.getElementById("invitationChart");
+    if (ctx1) {
+        ctx1 = ctx1.getContext("2d");
+        new Chart(ctx1, {
+            type: "doughnut",
+            data: {
+                labels: ['Terkirim', 'Belum Dikirim', 'Gagal'],
+                datasets: [{
+                    data: [{{ $sentInvitations }}, {{ $pendingInvitations }}, {{ $failedInvitations }}],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 0
+                }]
             },
-            x: {
-                display: false
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
             }
-        }
+        });
     }
-});
-@endif
+    @endif
 
-// Device Breakdown Chart
-@if($clickAnalytics['device_breakdown']->count() > 0)
-var ctx2 = document.getElementById("deviceBreakdownChart").getContext("2d");
-
-new Chart(ctx2, {
-    type: "doughnut",
-    data: {
-        labels: {!! json_encode(array_keys($clickAnalytics['device_breakdown']->toArray())) !!}.map(function(label) {
-            return label.charAt(0).toUpperCase() + label.slice(1);
-        }),
-        datasets: [{
-            label: "Device",
-            weight: 9,
-            cutout: 50,
-            tension: 0.9,
-            pointRadius: 2,
-            borderWidth: 2,
-            backgroundColor: ['#28a745', '#007bff', '#17a2b8', '#6c757d'],
-            data: {!! json_encode(array_values($clickAnalytics['device_breakdown']->toArray())) !!},
-            fill: false
-        }],
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false,
-            }
-        },
-        interaction: {
-            intersect: false,
-            mode: 'index',
-        },
-        scales: {
-            y: {
-                display: false
+    // Device Breakdown Chart
+    @if($clickAnalytics['device_breakdown']->count() > 0)
+    var ctx2 = document.getElementById("deviceBreakdownChart");
+    if (ctx2) {
+        ctx2 = ctx2.getContext("2d");
+        new Chart(ctx2, {
+            type: "doughnut",
+            data: {
+                labels: {!! json_encode(array_map('ucfirst', array_keys($clickAnalytics['device_breakdown']->toArray()))) !!},
+                datasets: [{
+                    data: {!! json_encode(array_values($clickAnalytics['device_breakdown']->toArray())) !!},
+                    backgroundColor: ['#28a745', '#007bff', '#17a2b8', '#6c757d'],
+                    borderWidth: 0
+                }]
             },
-            x: {
-                display: false
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
             }
-        }
+        });
     }
+    @endif
 });
-@endif
 </script>
 @endpush

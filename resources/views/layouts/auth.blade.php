@@ -47,7 +47,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link d-flex align-items-center me-2 active" aria-current="page"
                                         href="{{ route('login') }}">
-                                        <i class="fa fa-user opacity-6 text-dark me-1"></i>
+                                        <i class="fas fa-users opacity-6 text-dark me-1"></i>
                                         Sign In
                                     </a>
                                 </li>
