@@ -23,6 +23,26 @@
                                 <span>Belum Dikirim:</span>
                                 <strong>{{ $groomPendingCount }}</strong>
                             </div>
+                            <!-- Breakdown per negara untuk Mempelai Pria -->
+                            <hr>
+                            <small class="text-muted">Per Negara:</small>
+                            <div class="d-flex justify-content-between">
+                                <span>🇮🇩 ID:</span>
+                                <strong>{{ $groomAdmin->contacts->where('country', 'ID')->count() ?? 0 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>🇲🇾 MY:</span>
+                                <strong>{{ $groomAdmin->contacts->where('country', 'MY')->count() ?? 0 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>🇸🇬 SG:</span>
+                                <strong>{{ $groomAdmin->contacts->where('country', 'SG')->count() ?? 0 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>🌍 Lainnya:</span>
+                                <strong>{{ $groomAdmin->contacts->whereNotIn('country', ['ID', 'MY', 'SG'])->count() ??
+                                    0 }}</strong>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -41,6 +61,26 @@
                             <div class="d-flex justify-content-between">
                                 <span>Belum Dikirim:</span>
                                 <strong>{{ $bridePendingCount }}</strong>
+                            </div>
+                            <!-- Breakdown per negara untuk Mempelai Wanita -->
+                            <hr>
+                            <small class="text-muted">Per Negara:</small>
+                            <div class="d-flex justify-content-between">
+                                <span>🇮🇩 ID:</span>
+                                <strong>{{ $brideAdmin->contacts->where('country', 'ID')->count() ?? 0 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>🇲🇾 MY:</span>
+                                <strong>{{ $brideAdmin->contacts->where('country', 'MY')->count() ?? 0 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>🇸🇬 SG:</span>
+                                <strong>{{ $brideAdmin->contacts->where('country', 'SG')->count() ?? 0 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>🌍 Lainnya:</span>
+                                <strong>{{ $brideAdmin->contacts->whereNotIn('country', ['ID', 'MY', 'SG'])->count() ??
+                                    0 }}</strong>
                             </div>
                         </div>
                     </div>
@@ -111,6 +151,75 @@
                 @enderror
             </div>
 
+            <!-- Filter berdasarkan Negara -->
+            <div class="mb-3">
+                <label class="form-label">Filter berdasarkan Negara (Opsional):</label>
+                <div class="alert alert-info">
+                    <small><strong>Tips:</strong> Untuk kirim pesan bertahap berdasarkan bahasa:</small>
+                    <ul class="mb-0">
+                        <li>Pilih 🇮🇩 Indonesia untuk kirim template Bahasa Indonesia</li>
+                        <li>Pilih 🇲🇾 Malaysia untuk kirim template Bahasa Inggris</li>
+                        <li>Jika tidak dipilih, akan kirim ke semua negara</li>
+                    </ul>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="country_filter[]" id="filter_id"
+                                value="ID">
+                            <label class="form-check-label" for="filter_id">
+                                🇮🇩 Indonesia (ID)
+                                <span class="badge bg-primary">
+                                    {{ ($groomAdmin->contacts->where('country', 'ID')->count() ?? 0) +
+                                    ($brideAdmin->contacts->where('country', 'ID')->count() ?? 0) }} kontak
+                                </span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="country_filter[]" id="filter_my"
+                                value="MY">
+                            <label class="form-check-label" for="filter_my">
+                                🇲🇾 Malaysia (MY)
+                                <span class="badge bg-primary">
+                                    {{ ($groomAdmin->contacts->where('country', 'MY')->count() ?? 0) +
+                                    ($brideAdmin->contacts->where('country', 'MY')->count() ?? 0) }} kontak
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="country_filter[]" id="filter_sg"
+                                value="SG">
+                            <label class="form-check-label" for="filter_sg">
+                                🇸🇬 Singapura (SG)
+                                <span class="badge bg-primary">
+                                    {{ ($groomAdmin->contacts->where('country', 'SG')->count() ?? 0) +
+                                    ($brideAdmin->contacts->where('country', 'SG')->count() ?? 0) }} kontak
+                                </span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="country_filter[]" id="filter_other"
+                                value="OTHER">
+                            <label class="form-check-label" for="filter_other">
+                                🌍 Negara Lainnya
+                                <span class="badge bg-primary">
+                                    {{ ($groomAdmin->contacts->whereNotIn('country', ['ID', 'MY', 'SG'])->count() ?? 0)
+                                    + ($brideAdmin->contacts->whereNotIn('country', ['ID', 'MY', 'SG'])->count() ?? 0)
+                                    }} kontak
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <small class="form-text text-muted">
+                    Jika tidak ada yang dipilih, pesan akan dikirim ke semua negara sesuai admin yang dipilih.
+                </small>
+            </div>
+
             <div class="mb-3">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="only_pending" id="only_pending" value="1" {{
@@ -140,7 +249,7 @@
                                     'greeting' => $contact->greeting,
                                     'country' => $contact->country,
                                     'country_code' => $contact->country_code
-                                ]) }}">{{ $contact->name }}</option>
+                                ]) }}">{{ $contact->name }} ({{ $contact->country }})</option>
                                 @endforeach
                             </optgroup>
                             <optgroup label="Kontak Mempelai Wanita">
@@ -151,7 +260,7 @@
                                     'greeting' => $contact->greeting,
                                     'country' => $contact->country,
                                     'country_code' => $contact->country_code
-                                ]) }}">{{ $contact->name }}</option>
+                                ]) }}">{{ $contact->name }} ({{ $contact->country }})</option>
                                 @endforeach
                             </optgroup>
                         </select>

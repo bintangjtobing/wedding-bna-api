@@ -45,6 +45,7 @@ class MessageController extends Controller
     {
         return $this->whatsappService->sendMessage($apiKey, $phoneNumber, $message, $recipientName);
     }
+
     public function send(Request $request)
     {
         $validated = $request->validate([
@@ -52,6 +53,8 @@ class MessageController extends Controller
             'admin_selection' => 'required|array',
             'admin_selection.*' => 'exists:admins,id',
             'only_pending' => 'nullable|boolean',
+            'country_filter' => 'nullable|array', // Tambahan untuk filter negara
+            'country_filter.*' => 'in:ID,MY,SG,US,OTHER',
         ]);
 
         // Simpan pesan
@@ -73,6 +76,31 @@ class MessageController extends Controller
             // Jika opsi hanya kirim ke kontak belum terkirim diaktifkan
             if ($request->has('only_pending') && $request->only_pending) {
                 $contactsQuery->where('invitation_status', 'belum_dikirim');
+            }
+
+            // TAMBAHAN: Filter berdasarkan negara jika dipilih
+            if ($request->has('country_filter') && !empty($request->country_filter)) {
+                $countries = $request->country_filter;
+
+                // Jika ada filter "OTHER", tambahkan kondisi khusus
+                if (in_array('OTHER', $countries)) {
+                    // Hapus 'OTHER' dari array dan tambahkan kondisi whereNotIn
+                    $specificCountries = array_diff($countries, ['OTHER']);
+
+                    if (!empty($specificCountries)) {
+                        // Jika ada negara spesifik DAN 'OTHER'
+                        $contactsQuery->where(function($query) use ($specificCountries) {
+                            $query->whereIn('country', $specificCountries)
+                                  ->orWhereNotIn('country', ['ID', 'MY', 'SG', 'US']);
+                        });
+                    } else {
+                        // Jika hanya 'OTHER' yang dipilih
+                        $contactsQuery->whereNotIn('country', ['ID', 'MY', 'SG', 'US']);
+                    }
+                } else {
+                    // Jika tidak ada 'OTHER', gunakan whereIn biasa
+                    $contactsQuery->whereIn('country', $countries);
+                }
             }
 
             $contacts = $contactsQuery->get();
@@ -123,15 +151,36 @@ class MessageController extends Controller
             }
         }
 
-        return redirect()->route('dashboard')
-            ->with('success', "Pesan terkirim ke {$sentCount} kontak, gagal ke {$failedCount} kontak.");
+        // Siapkan pesan sukses dengan info filter negara
+        $successMessage = "Pesan terkirim ke {$sentCount} kontak, gagal ke {$failedCount} kontak.";
+
+        if ($request->has('country_filter') && !empty($request->country_filter)) {
+            $countryNames = [
+                'ID' => 'Indonesia',
+                'MY' => 'Malaysia',
+                'SG' => 'Singapura',
+                'US' => 'Amerika Serikat',
+                'OTHER' => 'Negara Lainnya'
+            ];
+
+            $selectedCountries = array_map(function($code) use ($countryNames) {
+                return $countryNames[$code] ?? $code;
+            }, $request->country_filter);
+
+            $successMessage .= " Filter negara: " . implode(', ', $selectedCountries) . ".";
+        }
+
+        return redirect()->route('dashboard')->with('success', $successMessage);
     }
+
     public function resendFailed(Request $request)
     {
         $validated = $request->validate([
             'message_content' => 'required|string',
             'admin_selection' => 'required|array',
             'admin_selection.*' => 'exists:admins,id',
+            'country_filter' => 'nullable|array', // Tambahan untuk filter negara
+            'country_filter.*' => 'in:ID,MY,SG,US,OTHER',
         ]);
 
         // Simpan pesan baru
@@ -148,7 +197,29 @@ class MessageController extends Controller
             $admin = Admin::findOrFail($adminId);
 
             // Ambil kontak yang sebelumnya gagal
-            $contacts = $admin->contacts()->where('invitation_status', 'gagal')->get();
+            $contactsQuery = $admin->contacts()->where('invitation_status', 'gagal');
+
+            // TAMBAHAN: Filter berdasarkan negara jika dipilih (sama seperti di method send)
+            if ($request->has('country_filter') && !empty($request->country_filter)) {
+                $countries = $request->country_filter;
+
+                if (in_array('OTHER', $countries)) {
+                    $specificCountries = array_diff($countries, ['OTHER']);
+
+                    if (!empty($specificCountries)) {
+                        $contactsQuery->where(function($query) use ($specificCountries) {
+                            $query->whereIn('country', $specificCountries)
+                                  ->orWhereNotIn('country', ['ID', 'MY', 'SG', 'US']);
+                        });
+                    } else {
+                        $contactsQuery->whereNotIn('country', ['ID', 'MY', 'SG', 'US']);
+                    }
+                } else {
+                    $contactsQuery->whereIn('country', $countries);
+                }
+            }
+
+            $contacts = $contactsQuery->get();
 
             foreach ($contacts as $contact) {
                 // Buat log pesan
@@ -199,6 +270,7 @@ class MessageController extends Controller
         return redirect()->route('dashboard')
             ->with('success', "Pengiriman ulang berhasil: {$sentCount} terkirim, {$failedCount} gagal.");
     }
+
     // API endpoint untuk mengirim pesan undangan
     public function apiSendMessage(Request $request)
     {
@@ -207,6 +279,8 @@ class MessageController extends Controller
             'admin_selection' => 'required|array',
             'admin_selection.*' => 'exists:admins,id',
             'only_pending' => 'nullable|boolean',
+            'country_filter' => 'nullable|array', // Tambahan untuk filter negara
+            'country_filter.*' => 'in:ID,MY,SG,US,OTHER',
         ]);
 
         $currentAdmin = Auth::guard('admin')->user();
@@ -233,6 +307,26 @@ class MessageController extends Controller
                 $contactsQuery->where('invitation_status', 'belum_dikirim');
             }
 
+            // TAMBAHAN: Filter berdasarkan negara jika dipilih (sama seperti method send)
+            if ($request->has('country_filter') && !empty($request->country_filter)) {
+                $countries = $request->country_filter;
+
+                if (in_array('OTHER', $countries)) {
+                    $specificCountries = array_diff($countries, ['OTHER']);
+
+                    if (!empty($specificCountries)) {
+                        $contactsQuery->where(function($query) use ($specificCountries) {
+                            $query->whereIn('country', $specificCountries)
+                                ->orWhereNotIn('country', ['ID', 'MY', 'SG', 'US']);
+                        });
+                    } else {
+                        $contactsQuery->whereNotIn('country', ['ID', 'MY', 'SG', 'US']);
+                    }
+                } else {
+                    $contactsQuery->whereIn('country', $countries);
+                }
+            }
+
             $contacts = $contactsQuery->get();
 
             foreach ($contacts as $contact) {
@@ -244,14 +338,16 @@ class MessageController extends Controller
                     'status' => 'pending',
                 ]);
 
-                // Personalisasi pesan dengan mengganti [NAMA] dengan nama kontak
-                $personalizedMessage = str_replace('[NAMA]', $contact->name, $validated['message']);
+                // Personalisasi pesan dengan mengganti placeholder dengan data kontak
+                $originalMessage = $validated['message'];
+                $personalizedMessage = $this->personalizeMessage($originalMessage, $contact);
 
                 // Kirim pesan via WhatsApp API
                 $result = $this->sendWhatsAppMessage(
                     $admin->whatsapp_api_key,
                     $contact->phone_number,
-                    $personalizedMessage
+                    $personalizedMessage,
+                    $contact->name
                 );
 
                 // Update status log pesan dan status undangan di kontak
@@ -281,6 +377,7 @@ class MessageController extends Controller
                     'id' => $messageLog->id,
                     'contact' => $contact->name,
                     'phone' => $contact->phone_number,
+                    'country' => $contact->country,
                     'status' => $messageLog->status,
                     'invitation_status' => $contact->invitation_status,
                     'sent_at' => $contact->sent_at ? $contact->sent_at->format('Y-m-d H:i:s') : null,
@@ -288,15 +385,36 @@ class MessageController extends Controller
             }
         }
 
-    return response()->json([
-        'status' => 'success',
-        'message' => "Pesan terkirim ke {$sentCount} kontak, gagal ke {$failedCount} kontak.",
-        'data' => [
-            'sent_count' => $sentCount,
-            'failed_count' => $failedCount,
-            'logs' => $logs,
-        ]
-    ]);
+        // Siapkan response dengan info filter negara
+        $responseMessage = "Pesan terkirim ke {$sentCount} kontak, gagal ke {$failedCount} kontak.";
+
+        if ($request->has('country_filter') && !empty($request->country_filter)) {
+            $countryNames = [
+                'ID' => 'Indonesia',
+                'MY' => 'Malaysia',
+                'SG' => 'Singapura',
+                'US' => 'Amerika Serikat',
+                'OTHER' => 'Negara Lainnya'
+            ];
+
+            $selectedCountries = array_map(function($code) use ($countryNames) {
+                return $countryNames[$code] ?? $code;
+            }, $request->country_filter);
+
+            $responseMessage .= " Filter negara: " . implode(', ', $selectedCountries) . ".";
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => $responseMessage,
+            'data' => [
+                'sent_count' => $sentCount,
+                'failed_count' => $failedCount,
+                'filtered_countries' => $request->country_filter ?? [],
+                'total_processed' => $sentCount + $failedCount,
+                'logs' => $logs,
+            ]
+        ]);
     }
     private function personalizeMessage($message, Contact $contact)
     {
