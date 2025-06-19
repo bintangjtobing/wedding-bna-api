@@ -1,5 +1,7 @@
-<!-- BAGIAN 1: Letakkan di awal file sampai sebelum Geographic & Browser Info -->
 @extends('layouts.app')
+@section('title', 'Analytics Detail - Wedding Invitation')
+@section('breadcrumb', 'Analytics')
+@section('page-title', 'Contact Analytics Detail')
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -131,9 +133,9 @@
 <div class="row mb-4">
     <div class="col-xl-2 col-md-4 mb-3">
         <div class="card text-center border-secondary h-100">
-            <div class="card-body">
-                <i class="fas fa-globe-americas text-secondary mb-2" style="font-size: 1.5rem;"></i>
-                <div class="display-6 fw-bold text-dark">{{ $stats['continents'] ?? 0 }}</div>
+            <div class="card-body py-3">
+                <i class="fas fa-globe-americas text-secondary mb-2" style="font-size: 1.2rem;"></i>
+                <div class="h5 fw-bold text-dark mb-1">{{ $stats['continents'] ?? 0 }}</div>
                 <div class="text-muted small">Continents</div>
             </div>
         </div>
@@ -141,9 +143,9 @@
 
     <div class="col-xl-2 col-md-4 mb-3">
         <div class="card text-center border-secondary h-100">
-            <div class="card-body">
-                <i class="fas fa-map-pin text-secondary mb-2" style="font-size: 1.5rem;"></i>
-                <div class="display-6 fw-bold text-dark">{{ $stats['zip_codes'] ?? 0 }}</div>
+            <div class="card-body py-3">
+                <i class="fas fa-map-pin text-secondary mb-2" style="font-size: 1.2rem;"></i>
+                <div class="h5 fw-bold text-dark mb-1">{{ $stats['zip_codes'] ?? 0 }}</div>
                 <div class="text-muted small">Zip Codes</div>
             </div>
         </div>
@@ -151,9 +153,9 @@
 
     <div class="col-xl-2 col-md-4 mb-3">
         <div class="card text-center border-info h-100">
-            <div class="card-body">
-                <i class="fas fa-calendar-day text-info mb-2" style="font-size: 1.5rem;"></i>
-                <div class="display-6 fw-bold text-info">{{ $stats['today_clicks'] ?? 0 }}</div>
+            <div class="card-body py-3">
+                <i class="fas fa-calendar-day text-info mb-2" style="font-size: 1.2rem;"></i>
+                <div class="h5 fw-bold text-info mb-1">{{ $stats['today_clicks'] ?? 0 }}</div>
                 <div class="text-muted small">Today</div>
             </div>
         </div>
@@ -161,9 +163,9 @@
 
     <div class="col-xl-2 col-md-4 mb-3">
         <div class="card text-center border-primary h-100">
-            <div class="card-body">
-                <i class="fas fa-calendar-week text-primary mb-2" style="font-size: 1.5rem;"></i>
-                <div class="display-6 fw-bold text-primary">{{ $stats['this_week_clicks'] ?? 0 }}</div>
+            <div class="card-body py-3">
+                <i class="fas fa-calendar-week text-primary mb-2" style="font-size: 1.2rem;"></i>
+                <div class="h5 fw-bold text-primary mb-1">{{ $stats['this_week_clicks'] ?? 0 }}</div>
                 <div class="text-muted small">This Week</div>
             </div>
         </div>
@@ -171,9 +173,9 @@
 
     <div class="col-xl-2 col-md-4 mb-3">
         <div class="card text-center border-success h-100">
-            <div class="card-body">
-                <i class="fas fa-calendar-alt text-success mb-2" style="font-size: 1.5rem;"></i>
-                <div class="display-6 fw-bold text-success">{{ $stats['this_month_clicks'] ?? 0 }}</div>
+            <div class="card-body py-3">
+                <i class="fas fa-calendar-alt text-success mb-2" style="font-size: 1.2rem;"></i>
+                <div class="h5 fw-bold text-success mb-1">{{ $stats['this_month_clicks'] ?? 0 }}</div>
                 <div class="text-muted small">This Month</div>
             </div>
         </div>
@@ -181,9 +183,9 @@
 
     <div class="col-xl-2 col-md-4 mb-3">
         <div class="card text-center border-warning h-100">
-            <div class="card-body">
-                <i class="fas fa-mobile-alt text-warning mb-2" style="font-size: 1.5rem;"></i>
-                <div class="display-6 fw-bold text-warning">
+            <div class="card-body py-3">
+                <i class="fas fa-mobile-alt text-warning mb-2" style="font-size: 1.2rem;"></i>
+                <div class="h5 fw-bold text-warning mb-1">
                     {{ isset($stats['device_breakdown']['mobile']) ? round(($stats['device_breakdown']['mobile'] /
                     max($stats['total_clicks'], 1)) * 100) : 0 }}%
                 </div>
@@ -192,7 +194,6 @@
         </div>
     </div>
 </div>
-
 <!-- Charts Section -->
 <div class="row mb-4">
     <!-- Daily Clicks Chart -->
@@ -206,12 +207,14 @@
             </div>
             <div class="card-body">
                 @if(isset($dailyClicks) && $dailyClicks->count() > 0)
-                <canvas id="dailyClicksChart" height="300"></canvas>
+                <div style="position: relative; height: 250px;">
+                    <canvas id="dailyClicksChart"></canvas>
+                </div>
                 @else
-                <div class="text-center py-5">
-                    <i class="fas fa-chart-line" style="font-size: 4rem; color: #6c757d;"></i>
-                    <h5 class="mt-3 text-muted">No Daily Data Available</h5>
-                    <p class="text-muted">Daily click data will appear here once visitors start clicking.</p>
+                <div class="text-center py-4">
+                    <i class="fas fa-chart-line" style="font-size: 3rem; color: #6c757d;"></i>
+                    <h6 class="mt-3 text-muted">No Daily Data Available</h6>
+                    <p class="text-muted small">Daily click data will appear here once visitors start clicking.</p>
                 </div>
                 @endif
             </div>
@@ -229,7 +232,9 @@
             </div>
             <div class="card-body">
                 @if(isset($stats['device_breakdown']) && array_sum($stats['device_breakdown']) > 0)
-                <canvas id="deviceChart" height="300"></canvas>
+                <div style="position: relative; height: 200px;">
+                    <canvas id="deviceChart"></canvas>
+                </div>
                 <div class="row mt-3">
                     @foreach($stats['device_breakdown'] as $device => $count)
                     @if($count > 0)
@@ -248,8 +253,8 @@
                     @endforeach
                 </div>
                 @else
-                <div class="text-center py-5">
-                    <i class="fas fa-devices" style="font-size: 4rem; color: #6c757d;"></i>
+                <div class="text-center py-4">
+                    <i class="fas fa-devices" style="font-size: 3rem; color: #6c757d;"></i>
                     <h6 class="mt-3 text-muted">No Device Data</h6>
                     <p class="text-muted small">Device breakdown will show here.</p>
                 </div>
@@ -258,7 +263,6 @@
         </div>
     </div>
 </div>
-<!-- BAGIAN 2: Letakkan setelah Charts Section dari Bagian 1 -->
 
 <!-- Geographic & Browser Info -->
 <div class="row mb-4">
@@ -275,7 +279,7 @@
                 @if(isset($stats['top_countries']) && count($stats['top_countries']) > 0)
                 <div class="list-group list-group-flush">
                     @foreach($stats['top_countries'] as $country => $count)
-                    <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
                         <span class="fw-medium">
                             <i class="fas fa-map-marker-alt me-2 text-muted"></i>
                             {{ $country }}
@@ -286,8 +290,8 @@
                 </div>
                 @else
                 <div class="text-center py-4">
-                    <i class="fas fa-globe" style="font-size: 3rem; color: #6c757d;"></i>
-                    <p class="text-muted mt-2">No geographic data yet</p>
+                    <i class="fas fa-globe" style="font-size: 2.5rem; color: #6c757d;"></i>
+                    <p class="text-muted mt-2 mb-0">No geographic data yet</p>
                 </div>
                 @endif
             </div>
@@ -307,7 +311,7 @@
                 @if(isset($stats['top_cities']) && count($stats['top_cities']) > 0)
                 <div class="list-group list-group-flush">
                     @foreach($stats['top_cities'] as $city => $count)
-                    <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
                         <span class="fw-medium">
                             <i class="fas fa-building me-2 text-muted"></i>
                             {{ $city }}
@@ -318,8 +322,8 @@
                 </div>
                 @else
                 <div class="text-center py-4">
-                    <i class="fas fa-city" style="font-size: 3rem; color: #6c757d;"></i>
-                    <p class="text-muted mt-2">No city data yet</p>
+                    <i class="fas fa-city" style="font-size: 2.5rem; color: #6c757d;"></i>
+                    <p class="text-muted mt-2 mb-0">No city data yet</p>
                 </div>
                 @endif
             </div>
@@ -339,7 +343,7 @@
                 @if(isset($stats['browsers']) && count($stats['browsers']) > 0)
                 <div class="list-group list-group-flush">
                     @foreach($stats['browsers'] as $browser => $count)
-                    <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
                         <span class="fw-medium">
                             <i class="fab
                                 @if(stripos($browser, 'chrome') !== false) fa-chrome
@@ -357,8 +361,8 @@
                 </div>
                 @else
                 <div class="text-center py-4">
-                    <i class="fas fa-globe" style="font-size: 3rem; color: #6c757d;"></i>
-                    <p class="text-muted mt-2">No browser data yet</p>
+                    <i class="fas fa-globe" style="font-size: 2.5rem; color: #6c757d;"></i>
+                    <p class="text-muted mt-2 mb-0">No browser data yet</p>
                 </div>
                 @endif
             </div>
@@ -379,7 +383,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover table-sm">
                         <thead class="table-light">
                             <tr>
                                 <th><i class="fas fa-flag me-1"></i>Country</th>
@@ -403,7 +407,7 @@
                                     <span class="badge bg-primary">{{ $location->count }}</span>
                                 </td>
                                 <td>
-                                    <div class="progress" style="height: 20px;">
+                                    <div class="progress" style="height: 16px;">
                                         <div class="progress-bar bg-gradient-primary"
                                             style="width: {{ ($location->count / max($stats['total_clicks'], 1)) * 100 }}%">
                                             {{ round(($location->count / max($stats['total_clicks'], 1)) * 100, 1) }}%
@@ -420,7 +424,6 @@
     </div>
 </div>
 @endif
-
 <!-- Recent Click Logs -->
 <div class="row">
     <div class="col-12">
@@ -438,7 +441,7 @@
             <div class="card-body">
                 @if($logs && $logs->count() > 0)
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table table-hover align-middle table-sm">
                         <thead class="table-dark">
                             <tr>
                                 <th><i class="fas fa-clock me-1"></i>Time</th>
@@ -452,7 +455,7 @@
                             @foreach($logs as $log)
                             <tr>
                                 <td>
-                                    <div class="fw-bold">
+                                    <div class="fw-bold small">
                                         <i class="fas fa-calendar me-1 text-muted"></i>
                                         {{ $log->clicked_at->format('M d, Y') }}
                                     </div>
@@ -474,7 +477,7 @@
                                 <td>
                                     @if($log->country)
                                     <div>
-                                        <div class="fw-bold">
+                                        <div class="fw-bold small">
                                             <i class="fas fa-flag me-1"></i>
                                             {{ $log->country_emoji }} {{ $log->city ?? 'Unknown City' }}
                                         </div>
@@ -487,14 +490,14 @@
                                         @endif
                                     </div>
                                     @else
-                                    <span class="text-muted">
+                                    <span class="text-muted small">
                                         <i class="fas fa-question-circle me-1"></i> Unknown Location
                                     </span>
                                     @endif
                                 </td>
                                 <td>
                                     @if($log->device_name)
-                                    <div class="fw-bold">
+                                    <div class="fw-bold small">
                                         <i class="fas
                                             @if($log->device_type == 'mobile') fa-mobile-alt
                                             @elseif($log->device_type == 'desktop') fa-desktop
@@ -517,7 +520,7 @@
                                         small">{{ ucfirst($log->device_type) }}</span>
                                     @endif
                                     @else
-                                    <span class="text-muted">
+                                    <span class="text-muted small">
                                         <i class="fas fa-question-circle me-1"></i>
                                         Unknown Device
                                     </span>
@@ -527,7 +530,7 @@
                                     @if($log->browser_name || $log->os_name)
                                     <div>
                                         @if($log->browser_name)
-                                        <div class="fw-bold">
+                                        <div class="fw-bold small">
                                             <i class="fab
                                                 @if(stripos($log->browser_name, 'chrome') !== false) fa-chrome
                                                 @elseif(stripos($log->browser_name, 'firefox') !== false) fa-firefox
@@ -553,7 +556,7 @@
                                         @endif
                                     </div>
                                     @else
-                                    <span class="text-muted">
+                                    <span class="text-muted small">
                                         <i class="fas fa-question-circle me-1"></i>
                                         Unknown
                                     </span>
@@ -573,11 +576,11 @@
                 @endif
 
                 @else
-                <div class="text-center py-5">
-                    <i class="fas fa-chart-line" style="font-size: 5rem; color: #6c757d;"></i>
-                    <h4 class="mt-3 text-muted">No Click Activity Yet</h4>
+                <div class="text-center py-4">
+                    <i class="fas fa-chart-line" style="font-size: 4rem; color: #6c757d;"></i>
+                    <h5 class="mt-3 text-muted">No Click Activity Yet</h5>
                     <p class="text-muted">Click activities will appear here once visitors access the invitation.</p>
-                    <div class="mt-4">
+                    <div class="mt-3">
                         <div class="row justify-content-center">
                             <div class="col-md-6">
                                 <div class="alert alert-info">
@@ -600,6 +603,7 @@
         </div>
     </div>
 </div>
+
 <!-- Charts JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -623,7 +627,7 @@
                         pointBackgroundColor: 'rgb(54, 162, 235)',
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2,
-                        pointRadius: 5
+                        pointRadius: 4
                     }]
                 },
                 options: {
@@ -649,13 +653,14 @@
                     },
                     elements: {
                         point: {
-                            hoverRadius: 8
+                            hoverRadius: 6
                         }
                     }
                 }
             });
         }
         @endif
+
         // Device Breakdown Chart
         @if(isset($stats['device_breakdown']) && array_sum($stats['device_breakdown']) > 0)
         const deviceCtx = document.getElementById('deviceChart');
@@ -675,7 +680,7 @@
                             '#17a2b8', // tablet - cyan
                             '#6c757d'  // others - gray
                         ],
-                        borderWidth: 3,
+                        borderWidth: 2,
                         borderColor: '#fff'
                     }]
                 },
@@ -696,7 +701,7 @@
                             }
                         }
                     },
-                    cutout: '60%'
+                    cutout: '65%'
                 }
             });
         }
@@ -724,42 +729,75 @@
 
     .card {
         border: none;
-        box-shadow: 0 0.15rem 1.75rem 0 rgba(33, 40, 50, 0.15);
-        transition: all 0.3s ease;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: all 0.15s ease-in-out;
     }
 
     .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 0.25rem 2rem 0 rgba(33, 40, 50, 0.2);
+        transform: translateY(-1px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     }
 
+    /* Chart containers - Fixed height issue */
+    .card-body>div[style*="position: relative"] {
+        width: 100% !important;
+        max-height: 300px !important;
+    }
+
+    canvas {
+        max-height: 250px !important;
+        border-radius: 6px;
+    }
+
+    /* Table styling */
     .table th {
         font-weight: 600;
         border-bottom: 2px solid #dee2e6;
+        font-size: 0.875rem;
     }
 
+    .table td {
+        font-size: 0.875rem;
+        vertical-align: middle;
+    }
+
+    .table-sm th,
+    .table-sm td {
+        padding: 0.5rem;
+    }
+
+    /* Progress bars */
     .progress {
-        border-radius: 10px;
+        border-radius: 8px;
+        height: 16px !important;
     }
 
     .progress-bar {
-        border-radius: 10px;
+        border-radius: 8px;
         transition: width 0.6s ease;
     }
 
+    /* Badges */
     .badge {
         font-size: 0.75em;
+        font-weight: 500;
     }
 
+    /* List groups */
     .list-group-item {
         border-left: none;
         border-right: none;
         border-top: none;
         border-bottom: 1px solid rgba(0, 0, 0, .125);
+        padding: 0.5rem 0;
     }
 
     .list-group-item:last-child {
         border-bottom: none;
+    }
+
+    .list-group-item:hover {
+        background-color: rgba(0, 123, 255, 0.05);
     }
 
     /* Font Awesome icon styling */
@@ -795,37 +833,6 @@
 
     .text-muted {
         color: #6c757d !important;
-    }
-
-    /* Card body icons */
-    .card-body i.fas,
-    .card-body i.fab {
-        font-size: inherit;
-    }
-
-    /* Header icons */
-    .card-header i.fas,
-    .card-header i.fab {
-        font-size: 1rem;
-    }
-
-    /* Table header icons */
-    .table th i.fas,
-    .table th i.fab {
-        font-size: 0.875rem;
-        color: #6c757d;
-    }
-
-    /* Badge icons */
-    .badge i.fas,
-    .badge i.fab {
-        font-size: 0.75rem;
-    }
-
-    /* Button icons */
-    .btn i.fas,
-    .btn i.fab {
-        font-size: 0.875rem;
     }
 
     /* Device type specific colors */
@@ -951,20 +958,38 @@
         opacity: 0.6;
     }
 
-    /* Hover effects for interactive elements */
-    .list-group-item:hover {
-        background-color: rgba(0, 123, 255, 0.05);
+    /* Card body improvements */
+    .card-body {
+        padding: 1.25rem;
     }
 
+    .card-body.py-3 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    /* Small cards for time-based analytics */
+    .card.border-secondary .card-body,
+    .card.border-info .card-body,
+    .card.border-primary .card-body,
+    .card.border-success .card-body,
+    .card.border-warning .card-body {
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* Hover effects */
     .table tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.05);
+        background-color: rgba(0, 123, 255, 0.03);
     }
 
     /* Animation for cards */
     @keyframes fadeInUp {
         from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(10px);
         }
 
         to {
@@ -977,15 +1002,10 @@
         animation: fadeInUp 0.3s ease;
     }
 
-    /* Chart container styling */
-    canvas {
-        border-radius: 8px;
-    }
-
     /* Alert styling enhancement */
     .alert {
         border: none;
-        border-radius: 10px;
+        border-radius: 8px;
     }
 
     .alert-info {
@@ -996,24 +1016,51 @@
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .display-4 {
-            font-size: 2rem;
+            font-size: 1.8rem;
         }
 
-        .display-6 {
-            font-size: 1.5rem;
+        .h5 {
+            font-size: 1.1rem;
         }
 
         .table-responsive {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
+        }
+
+        .card-body {
+            padding: 1rem;
         }
 
         /* Smaller icons on mobile */
         .card-body .fs-1 {
-            font-size: 2rem !important;
+            font-size: 1.8rem !important;
         }
 
-        .card-body i[style*="font-size: 1.5rem"] {
-            font-size: 1.2rem !important;
+        .card-body i[style*="font-size: 1.2rem"] {
+            font-size: 1rem !important;
+        }
+
+        /* Adjust chart heights on mobile */
+        canvas {
+            max-height: 200px !important;
+        }
+
+        .card-body>div[style*="position: relative"] {
+            max-height: 220px !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .display-4 {
+            font-size: 1.5rem;
+        }
+
+        .table-sm {
+            font-size: 0.75rem;
+        }
+
+        .badge {
+            font-size: 0.7em;
         }
     }
 </style>
