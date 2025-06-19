@@ -1,367 +1,364 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="card mb-4">
-    <div class="card-header">
-        Dashboard
-    </div>
-    <div class="card-body">
-        <h5 class="card-title">Selamat datang, {{ $currentAdmin->name }}!</h5>
-        <p class="card-text">Role: {{ $currentAdmin->role == 'groom' ? 'Mempelai Pria' : 'Mempelai Wanita' }}</p>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-3">
-        <div class="card mb-4">
-            <div class="card-header">Kontak Saya</div>
-            <div class="card-body">
-                <h1 class="display-4">{{ $contactCount }}</h1>
-                <p class="card-text">Total kontak yang Anda miliki</p>
-                <div class="d-grid gap-2">
-                    <a href="{{ route('contacts.index') }}" class="btn btn-primary">Lihat Kontak</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card mb-4">
-            <div class="card-header">Click Analytics</div>
-            <div class="card-body">
-                <h3 class="text-primary">{{ number_format($clickAnalytics['total_clicks']) }}</h3>
-                <p class="card-text mb-1">Total Clicks</p>
-                <div class="row text-center">
-                    <div class="col-6">
-                        <small class="text-muted">Unique Visitors</small>
-                        <div class="fw-bold text-success">{{ number_format($clickAnalytics['unique_visitors']) }}</div>
+<!-- Overall Statistics -->
+<div class="row mt-4">
+    <div class="col-lg-7 mb-lg-0 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="row">
+                    <div class="col-lg-6 col-7">
+                        <h6>Statistik Keseluruhan</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1">Gabungan data mempelai pria & wanita</span>
+                        </p>
                     </div>
-                    <div class="col-6">
-                        <small class="text-muted">Countries</small>
-                        <div class="fw-bold text-info">{{ $clickAnalytics['countries_reached'] }}</div>
+                    <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                            </a>
+                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                <li><a class="dropdown-item border-radius-md" href="{{ route('analytics.index') }}">View
+                                        Analytics</a></li>
+                                <li><a class="dropdown-item border-radius-md"
+                                        href="{{ route('contacts.export') }}">Export Data</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card mb-4">
-            <div class="card-header">Status Undangan Saya</div>
-            <div class="card-body">
-                <div class="mb-2">
-                    <div class="progress" style="height: 25px;">
-                        @php
-                        $totalContacts = $contactCount > 0 ? $contactCount : 1;
-                        $sentPercentage = ($sentInvitations / $totalContacts) * 100;
-                        $pendingPercentage = ($pendingInvitations / $totalContacts) * 100;
-                        $failedPercentage = ($failedInvitations / $totalContacts) * 100;
-                        @endphp
-                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ $sentPercentage }}%"
-                            aria-valuenow="{{ $sentPercentage }}" aria-valuemin="0" aria-valuemax="100">
-                            {{ $sentInvitations }}
-                        </div>
-                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ $pendingPercentage }}%"
-                            aria-valuenow="{{ $pendingPercentage }}" aria-valuemin="0" aria-valuemax="100">
-                            {{ $pendingInvitations }}
-                        </div>
-                        <div class="progress-bar bg-danger" role="progressbar" style="width: {{ $failedPercentage }}%"
-                            aria-valuenow="{{ $failedPercentage }}" aria-valuemin="0" aria-valuemax="100">
-                            {{ $failedInvitations }}
-                        </div>
-                    </div>
-                </div>
-                <div class="row text-center my-2">
-                    <div class="col">
-                        <span class="badge bg-success">{{ $sentInvitations }}</span>
-                    </div>
-                    <div class="col">
-                        <span class="badge bg-warning">{{ $pendingInvitations }}</span>
-                    </div>
-                    <div class="col">
-                        <span class="badge bg-danger">{{ $failedInvitations }}</span>
-                    </div>
-                </div>
-                <div class="d-grid gap-2 mt-3">
-                    <a href="{{ route('messages.create') }}" class="btn btn-success">Kirim Pesan Baru</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card mb-4">
-            <div class="card-header">Statistik Kontak</div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <h6>Mempelai Pria ({{ $groomContactCount }} kontak)</h6>
-                    <div class="progress mb-2" style="height: 20px;">
-                        @php
-                        $groomTotal = $groomContactCount > 0 ? $groomContactCount : 1;
-                        $groomSentPercentage = ($groomSentCount / $groomTotal) * 100;
-                        $groomPendingPercentage = ($groomPendingCount / $groomTotal) * 100;
-                        $groomFailedPercentage = ($groomFailedCount / $groomTotal) * 100;
-                        @endphp
-                        <div class="progress-bar bg-success" role="progressbar"
-                            style="width: {{ $groomSentPercentage }}%" aria-valuenow="{{ $groomSentPercentage }}"
-                            aria-valuemin="0" aria-valuemax="100">
-                            {{ $groomSentCount }}
-                        </div>
-                        <div class="progress-bar bg-warning" role="progressbar"
-                            style="width: {{ $groomPendingPercentage }}%" aria-valuenow="{{ $groomPendingPercentage }}"
-                            aria-valuemin="0" aria-valuemin="0" aria-valuemax="100">
-                            {{ $groomPendingCount }}
-                        </div>
-                        <div class="progress-bar bg-danger" role="progressbar"
-                            style="width: {{ $groomFailedPercentage }}%" aria-valuenow="{{ $groomFailedPercentage }}"
-                            aria-valuemin="0" aria-valuemax="100">
-                            {{ $groomFailedCount }}
-                        </div>
-                    </div>
-                    <small class="text-muted">{{ $groomClicks }} clicks, {{ $groomUniqueVisitors }} visitors</small>
-                </div>
-
-                <div class="mb-3">
-                    <h6>Mempelai Wanita ({{ $brideContactCount }} kontak)</h6>
-                    <div class="progress mb-2" style="height: 20px;">
-                        @php
-                        $brideTotal = $brideContactCount > 0 ? $brideContactCount : 1;
-                        $brideSentPercentage = ($brideSentCount / $brideTotal) * 100;
-                        $bridePendingPercentage = ($bridePendingCount / $brideTotal) * 100;
-                        $brideFailedPercentage = ($brideFailedCount / $brideTotal) * 100;
-                        @endphp
-                        <div class="progress-bar bg-success" role="progressbar"
-                            style="width: {{ $brideSentPercentage }}%" aria-valuenow="{{ $brideSentPercentage }}"
-                            aria-valuemin="0" aria-valuemax="100">
-                            {{ $brideSentCount }}
-                        </div>
-                        <div class="progress-bar bg-warning" role="progressbar"
-                            style="width: {{ $bridePendingPercentage }}%" aria-valuenow="{{ $bridePendingPercentage }}"
-                            aria-valuemin="0" aria-valuemax="100">
-                            {{ $bridePendingCount }}
-                        </div>
-                        <div class="progress-bar bg-danger" role="progressbar"
-                            style="width: {{ $brideFailedPercentage }}%" aria-valuenow="{{ $brideFailedPercentage }}"
-                            aria-valuemin="0" aria-valuemax="100">
-                            {{ $brideFailedCount }}
-                        </div>
-                    </div>
-                    <small class="text-muted">{{ $brideClicks }} clicks, {{ $brideUniqueVisitors }} visitors</small>
-                </div>
-
-                <div class="mt-3">
-                    <div class="d-flex justify-content-between">
-                        <span>Total Kontak:</span>
-                        <strong>{{ $groomContactCount + $brideContactCount }}</strong>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Total Clicks:</span>
-                        <strong>{{ $totalClicks }}</strong>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Total Terkirim:</span>
-                        <strong>{{ $groomSentCount + $brideSentCount }}</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Click Analytics Section -->
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">Top Countries Reached</h5>
-            </div>
-            <div class="card-body">
-                @if($clickAnalytics['top_countries']->count() > 0)
+            <div class="card-body px-0 pb-2">
                 <div class="table-responsive">
-                    <table class="table table-sm">
+                    <table class="table align-items-center mb-0">
                         <thead>
                             <tr>
-                                <th>Country</th>
-                                <th>Clicks</th>
-                                <th>Percentage</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kategori
+                                </th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                    Mempelai Pria</th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Mempelai Wanita</th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Total</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($clickAnalytics['top_countries'] as $country => $count)
                             <tr>
-                                <td>{{ $country }}</td>
-                                <td>{{ $count }}</td>
                                 <td>
-                                    <div class="progress" style="height: 15px;">
-                                        <div class="progress-bar bg-info"
-                                            style="width: {{ ($count / $clickAnalytics['total_clicks']) * 100 }}%">
+                                    <div class="d-flex px-2 py-1">
+                                        <div>
+                                            <img src="{{ asset('img/small-logos/logo-xd.svg') }}"
+                                                class="avatar avatar-sm me-3" alt="xd">
+                                        </div>
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="mb-0 text-sm">Total Kontak</h6>
+                                            <p class="text-xs text-secondary mb-0">Jumlah undangan</p>
                                         </div>
                                     </div>
-                                    {{ round(($count / $clickAnalytics['total_clicks']) * 100, 1) }}%
+                                </td>
+                                <td>
+                                    <p class="text-xs font-weight-bold mb-0">{{ $groomContactCount }}</p>
+                                    <p class="text-xs text-secondary mb-0">kontak</p>
+                                </td>
+                                <td class="align-middle text-center text-sm">
+                                    <span class="text-xs font-weight-bold">{{ $brideContactCount }}</span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-secondary text-xs font-weight-bold">{{ $groomContactCount +
+                                        $brideContactCount }}</span>
                                 </td>
                             </tr>
-                            @endforeach
+                            <tr>
+                                <td>
+                                    <div class="d-flex px-2 py-1">
+                                        <div>
+                                            <img src="{{ asset('img/small-logos/logo-atlassian.svg') }}"
+                                                class="avatar avatar-sm me-3" alt="atlassian">
+                                        </div>
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="mb-0 text-sm">Terkirim</h6>
+                                            <p class="text-xs text-secondary mb-0">Undangan berhasil</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="text-xs font-weight-bold mb-0">{{ $groomSentCount }}</p>
+                                    <p class="text-xs text-secondary mb-0">terkirim</p>
+                                </td>
+                                <td class="align-middle text-center text-sm">
+                                    <span class="text-xs font-weight-bold">{{ $brideSentCount }}</span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-secondary text-xs font-weight-bold">{{ $groomSentCount +
+                                        $brideSentCount }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex px-2 py-1">
+                                        <div>
+                                            <img src="{{ asset('img/small-logos/logo-slack.svg') }}"
+                                                class="avatar avatar-sm me-3" alt="team">
+                                        </div>
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="mb-0 text-sm">Total Clicks</h6>
+                                            <p class="text-xs text-secondary mb-0">Engagement rate</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="text-xs font-weight-bold mb-0">{{ $groomClicks }}</p>
+                                    <p class="text-xs text-secondary mb-0">{{ $groomUniqueVisitors }} visitors</p>
+                                </td>
+                                <td class="align-middle text-center text-sm">
+                                    <span class="text-xs font-weight-bold">{{ $brideClicks }}</span>
+                                    <br><span class="text-xs text-secondary">{{ $brideUniqueVisitors }} visitors</span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-secondary text-xs font-weight-bold">{{ $totalClicks }}</span>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
-                @else
-                <p class="text-center text-muted">Belum ada data click</p>
-                @endif
             </div>
         </div>
     </div>
-
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">Device Breakdown</h5>
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header pb-0">
+                <h6>Device Breakdown</h6>
+                <p class="text-sm">
+                    <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
+                    <span class="font-weight-bold">Analisis perangkat pengunjung</span>
+                </p>
             </div>
-            <div class="card-body">
+            <div class="card-body p-3">
                 @if($clickAnalytics['device_breakdown']->count() > 0)
-                <div class="row">
+                <div class="chart">
+                    <canvas id="deviceBreakdownChart" class="chart-canvas" height="300"></canvas>
+                </div>
+                <div class="row mt-3">
                     @foreach($clickAnalytics['device_breakdown'] as $device => $count)
-                    <div class="col-6 mb-3">
-                        <div class="text-center">
-                            <h4 class="text-primary">{{ $count }}</h4>
-                            <p class="mb-0">{{ $device }}</p>
-                            <small class="text-muted">{{ round(($count / $clickAnalytics['total_clicks']) * 100, 1)
-                                }}%</small>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-                @else
-                <p class="text-center text-muted">Belum ada data device</p>
-                @endif
-            </div>
-        </div>
-    </div>
-</div>
+                    <div class="col-6 mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="icon icon-shape icon-xs me-2
+                                @if($device == 'mobile') bg-gradient-success
+                                @elseif($device == 'desktop') bg-gradient-primary
+                                @elseif($device == 'tablet') bg-gradient-info
+                                @else bg-gradient-secondary @endif
+                                text-center border-radius-sm">
+                                <i class="
+                                    @if($device == 'mobile') ni ni-mobile-button
+                                    @elseif($device == 'desktop') ni ni-tv-2
+                                    @elseif($device == 'tablet')@extends('layouts.app')
 
-<!-- Recent Activities -->
-<div class="row">
-    <div class="col-md-12">
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">Recent Click Activities</h5>
-            </div>
-            <div class="card-body">
-                @if($clickAnalytics['recent_clicks']->count() > 0)
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Contact</th>
-                                <th>Location</th>
-                                <th>Device</th>
-                                <th>Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($clickAnalytics['recent_clicks'] as $click)
-                            <tr>
-                                <td>
-                                    <strong>{{ $click->name }}</strong><br>
-                                    <small class="text-muted">{{ $click->username }}</small>
-                                </td>
-                                <td>
-                                    @if($click->country)
-                                    {{ $click->country_emoji }} {{ $click->city }}, {{ $click->country }}
-                                    @else
-                                    <span class="text-muted">Unknown</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($click->device_name)
-                                    {{ $click->device_name }}<br>
-                                    <small class="text-muted">{{ $click->os_name }} • {{ $click->browser_name }}</small>
-                                    @else
-                                    <span class="text-muted">Unknown</span>
-                                    @endif
-                                </td>
-                                <td>{{ $click->clicked_at->diffForHumans() }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                @else
-                <p class="text-center text-muted">Belum ada aktivitas click</p>
-                @endif
-            </div>
-        </div>
-    </div>
-</div>
+@section('title', 'Dashboard - Wedding Invitation')
+@section('breadcrumb', 'Dashboard')
+@section('page-title', 'Dashboard')
 
-<!-- Status Pengiriman Undangan -->
-<div class="row">
-    <div class="col-md-12">
-        <div class="card mb-4">
-            <div class="card-header">
-                Status Pengiriman Undangan
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Status</th>
-                                <th>Jumlah</th>
-                                <th>Persentase</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span class="badge bg-success">Terkirim</span></td>
-                                <td>{{ $sentInvitations }}</td>
-                                <td>
-                                    @php
-                                    $sentPercent = $contactCount > 0 ? round(($sentInvitations / $contactCount) * 100,
-                                    1) : 0;
-                                    @endphp
-                                    {{ $sentPercent }}%
-                                </td>
-                                <td>
-                                    <a href="{{ route('contacts.index', ['status' => 'terkirim']) }}"
-                                        class="btn btn-sm btn-outline-success">Lihat Kontak</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge bg-warning">Belum Dikirim</span></td>
-                                <td>{{ $pendingInvitations }}</td>
-                                <td>
-                                    @php
-                                    $pendingPercent = $contactCount > 0 ? round(($pendingInvitations / $contactCount) *
-                                    100, 1) : 0;
-                                    @endphp
-                                    {{ $pendingPercent }}%
-                                </td>
-                                <td>
-                                    <a href="{{ route('contacts.index', ['status' => 'belum_dikirim']) }}"
-                                        class="btn btn-sm btn-outline-warning">Lihat Kontak</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge bg-danger">Gagal</span></td>
-                                <td>{{ $failedInvitations }}</td>
-                                <td>
-                                    @php
-                                    $failedPercent = $contactCount > 0 ? round(($failedInvitations / $contactCount) *
-                                    100, 1) : 0;
-                                    @endphp
-                                    {{ $failedPercent }}%
-                                </td>
-                                <td>
-                                    <a href="{{ route('contacts.index', ['status' => 'gagal']) }}"
-                                        class="btn btn-sm btn-outline-danger">Lihat Kontak</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+@section('content')
+<!-- Welcome Section -->
+<div class=" row">
+                                    <div class="col-12">
+                                        <div class="card mb-4">
+                                            <div class="card-body p-3">
+                                                <div class="row">
+                                                    <div class="col-8">
+                                                        <div class="numbers">
+                                                            <p class="text-sm mb-0 text-capitalize font-weight-bold">
+                                                                Selamat datang,</p>
+                                                            <h5 class="font-weight-bolder mb-0">
+                                                                {{ $currentAdmin->name }}!
+                                                                <span class="text-success text-sm font-weight-bolder">
+                                                                    @if(isset($currentAdmin->role))
+                                                                    ({{ $currentAdmin->role == 'groom' ? 'Mempelai Pria'
+                                                                    : 'Mempelai Wanita' }})
+                                                                    @else
+                                                                    (Wedding Admin)
+                                                                    @endif
+                                                                </span>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4 text-end">
+                                                        <div
+                                                            class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
+                                                            <i class="ni ni-satisfied text-lg opacity-10"
+                                                                aria-hidden="true"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+
+                            <!-- Stats Cards Row 1 -->
+                            <div class="row">
+                                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                                    <div class="card">
+                                        <div class="card-body p-3">
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <div class="numbers">
+                                                        <p class="text-sm mb-0 text-capitalize font-weight-bold">Total
+                                                            Kontak</p>
+                                                        <h5 class="font-weight-bolder mb-0">
+                                                            {{ $contactCount }}
+                                                            <span
+                                                                class="text-success text-sm font-weight-bolder">kontak</span>
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4 text-end">
+                                                    <div
+                                                        class="icon icon-shape bg-gradient-dark shadow text-center border-radius-md">
+                                                        <i class="ni ni-single-02 text-lg opacity-10"
+                                                            aria-hidden="true"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                                    <div class="card">
+                                        <div class="card-body p-3">
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <div class="numbers">
+                                                        <p class="text-sm mb-0 text-capitalize font-weight-bold">Total
+                                                            Clicks</p>
+                                                        <h5 class="font-weight-bolder mb-0">
+                                                            {{ number_format($clickAnalytics['total_clicks']) }}
+                                                            <span
+                                                                class="text-info text-sm font-weight-bolder">clicks</span>
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4 text-end">
+                                                    <div
+                                                        class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
+                                                        <i class="ni ni-chart-bar-32 text-lg opacity-10"
+                                                            aria-hidden="true"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                                    <div class="card">
+                                        <div class="card-body p-3">
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <div class="numbers">
+                                                        <p class="text-sm mb-0 text-capitalize font-weight-bold">Unique
+                                                            Visitors</p>
+                                                        <h5 class="font-weight-bolder mb-0">
+                                                            {{ number_format($clickAnalytics['unique_visitors']) }}
+                                                            <span
+                                                                class="text-success text-sm font-weight-bolder">visitors</span>
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4 text-end">
+                                                    <div
+                                                        class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
+                                                        <i class="ni ni-world text-lg opacity-10"
+                                                            aria-hidden="true"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-sm-6">
+                                    <div class="card">
+                                        <div class="card-body p-3">
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <div class="numbers">
+                                                        <p class="text-sm mb-0 text-capitalize font-weight-bold">
+                                                            Countries</p>
+                                                        <h5 class="font-weight-bolder mb-0">
+                                                            {{ $clickAnalytics['countries_reached'] }}
+                                                            <span
+                                                                class="text-warning text-sm font-weight-bolder">negara</span>
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4 text-end">
+                                                    <div
+                                                        class="icon icon-shape bg-gradient-warning shadow text-center border-radius-md">
+                                                        <i class="ni ni-pin-3 text-lg opacity-10"
+                                                            aria-hidden="true"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Invitation Status Row -->
+                            <div class="row mt-4">
+                                <div class="col-lg-7 mb-lg-0 mb-4">
+                                    <div class="card">
+                                        <div class="card-body p-3">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="d-flex flex-column h-100">
+                                                        <p class="mb-1 pt-2 text-bold">Status Undangan Saya</p>
+                                                        <h5 class="font-weight-bolder">{{ $contactCount }} Total Kontak
+                                                        </h5>
+                                                        <p class="mb-5">Distribusi status pengiriman undangan pernikahan
+                                                        </p>
+                                                        <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto"
+                                                            href="{{ route('contacts.index') }}">
+                                                            Lihat Semua Kontak
+                                                            <i class="fas fa-arrow-right text-sm ms-1"
+                                                                aria-hidden="true"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
+                                                    <div class="bg-gradient-primary border-radius-lg h-100">
+                                                        <div
+                                                            class="position-relative d-flex align-items-center justify-content-center h-100">
+                                                            <canvas id="invitationChart" width="100"
+                                                                height="100"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div class="card h-100 p-3">
+                                        <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100"
+                                            style="background-image: url('{{ asset('img/curved-images/curved1.jpg') }}');">
+                                            <span class="mask bg-gradient-dark"></span>
+                                            <div
+                                                class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
+                                                <h5 class="text-white font-weight-bolder mb-4 pt-2">Quick Actions</h5>
+                                                <p class="text-white">Aksi cepat untuk mengelola undangan pernikahan
+                                                    Anda dengan mudah.</p>
+                                                <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto"
+                                                    href="{{ route('messages.create') }}">
+                                                    Kirim Pesan Baru
+                                                    <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Overall Statistics -->
+                            <div class="row mt-4">
+                                <div class="col
