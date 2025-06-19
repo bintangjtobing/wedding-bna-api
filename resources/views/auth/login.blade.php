@@ -26,6 +26,63 @@
         background-size: cover;
         background-repeat: no-repeat;
     }
+
+    /* Icon styling */
+    .icon-shape {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        border-right: none;
+    }
+
+    .form-control {
+        border-left: none;
+    }
+
+    .form-control:focus {
+        border-left: none;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    .cursor-pointer:hover {
+        background-color: #e9ecef;
+    }
+
+    /* Feature icons */
+    .feature-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    /* Loading animation */
+    .fa-spin {
+        animation: fa-spin 2s infinite linear;
+    }
+
+    @keyframes fa-spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 </style>
 @endpush
 
@@ -41,8 +98,8 @@
                     <!-- Header -->
                     <div class="card-header bg-transparent border-0 pb-0 text-center">
                         <div class="text-center mb-4">
-                            <div class="icon icon-shape icon-lg bg-gradient-primary shadow mx-auto mb-3">
-                                <i class="fas fa-favourite-28 text-lg opacity-10" aria-hidden="true"></i>
+                            <div class="icon-shape bg-gradient-primary shadow mx-auto mb-3">
+                                <i class="fas fa-heart text-white text-lg"></i>
                             </div>
                             <h3 class="font-weight-bolder text-primary">Welcome Back!</h3>
                             <p class="text-muted">Sign in to your wedding dashboard</p>
@@ -56,7 +113,7 @@
                         @if($errors->any())
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <span class="alert-icon align-middle">
-                                <span class="material-icons text-md">error</span>
+                                <i class="fas fa-exclamation-circle text-md"></i>
                             </span>
                             <span class="alert-text">
                                 @foreach($errors->all() as $error)
@@ -72,7 +129,7 @@
                         @if(session('error'))
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <span class="alert-icon align-middle">
-                                <span class="material-icons text-md">error</span>
+                                <i class="fas fa-exclamation-triangle text-md"></i>
                             </span>
                             <span class="alert-text"><strong>{{ session('error') }}</strong></span>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -84,7 +141,7 @@
                         @if(session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <span class="alert-icon align-middle">
-                                <span class="material-icons text-md">check</span>
+                                <i class="fas fa-check-circle text-md"></i>
                             </span>
                             <span class="alert-text"><strong>{{ session('success') }}</strong></span>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -99,49 +156,59 @@
 
                             <!-- Email Field -->
                             <div class="mb-3">
-                                <label class="form-label font-weight-bold text-dark">Email Address</label>
+                                <label class="form-label font-weight-bold text-dark">
+                                    <i class="fas fa-envelope me-1"></i>Email Address
+                                </label>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">
-                                        <i class="fas fa-email-83"></i>
+                                        <i class="fas fa-at"></i>
                                     </span>
                                     <input type="email" class="form-control @error('email') is-invalid @enderror"
                                         placeholder="Enter your email" name="email" value="{{ old('email') }}" required
                                         autocomplete="email" autofocus>
                                 </div>
                                 @error('email')
-                                <div class="text-danger text-sm">{{ $message }}</div>
+                                <div class="text-danger text-sm">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
                                 @enderror
                             </div>
 
                             <!-- Password Field -->
                             <div class="mb-3">
-                                <label class="form-label font-weight-bold text-dark">Password</label>
+                                <label class="form-label font-weight-bold text-dark">
+                                    <i class="fas fa-lock me-1"></i>Password
+                                </label>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">
-                                        <i class="fas fa-lock-circle-open"></i>
+                                        <i class="fas fa-key"></i>
                                     </span>
                                     <input type="password" class="form-control @error('password') is-invalid @enderror"
                                         placeholder="Enter your password" name="password" required
                                         autocomplete="current-password" id="password">
                                     <span class="input-group-text cursor-pointer" onclick="togglePassword()">
-                                        <i class="fas fa-eye-17" id="toggleIcon"></i>
+                                        <i class="fas fa-eye" id="toggleIcon"></i>
                                     </span>
                                 </div>
                                 @error('password')
-                                <div class="text-danger text-sm">{{ $message }}</div>
+                                <div class="text-danger text-sm">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
                                 @enderror
                             </div>
 
                             <!-- Remember Me -->
                             <div class="form-check form-switch d-flex align-items-center mb-3">
                                 <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
-                                <label class="form-check-label mb-0 ms-2" for="rememberMe">Remember me</label>
+                                <label class="form-check-label mb-0 ms-2" for="rememberMe">
+                                    <i class="fas fa-memory me-1"></i>Remember me
+                                </label>
                             </div>
 
                             <!-- Submit Button -->
                             <div class="text-center">
                                 <button type="submit" class="btn bg-gradient-primary w-100 my-4 mb-2">
-                                    <i class="fas fa-button-power me-2"></i>
+                                    <i class="fas fa-sign-in-alt me-2"></i>
                                     Sign In
                                 </button>
                             </div>
@@ -152,13 +219,17 @@
                     <!-- Footer -->
                     <div class="card-footer text-center pt-0 px-lg-2 px-1 bg-transparent border-0">
                         <small class="text-muted">
-                            Need help?
-                            <a href="mailto:admin@wedding.com" class="text-primary font-weight-bold">Contact Support</a>
+                            <i class="fas fa-question-circle me-1"></i>Need help?
+                            <a href="mailto:admin@wedding.com" class="text-primary font-weight-bold">
+                                <i class="fas fa-envelope me-1"></i>Contact Support
+                            </a>
                         </small>
 
                         <div class="mt-3">
                             <small class="text-muted">
-                                © {{ date('Y') }} Wedding Invitation System. Made with ❤️
+                                <i class="fas fa-copyright me-1"></i>{{ date('Y') }} Wedding Invitation System. Made
+                                with
+                                <i class="fas fa-heart text-danger"></i>
                             </small>
                         </div>
                     </div>
@@ -168,26 +239,32 @@
                 <div class="row mt-3">
                     <div class="col-4">
                         <div class="text-center">
-                            <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                <i class="fas fa-send text-lg opacity-10" aria-hidden="true"></i>
+                            <div class="feature-icon bg-gradient-primary shadow text-center">
+                                <i class="fas fa-paper-plane text-white"></i>
                             </div>
-                            <h6 class="text-white mt-2 mb-0">Send Invites</h6>
+                            <h6 class="text-white mt-2 mb-0">
+                                <i class="fas fa-envelope me-1"></i>Send Invites
+                            </h6>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="text-center">
-                            <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md">
-                                <i class="fas fa-chart-bar-32 text-lg opacity-10" aria-hidden="true"></i>
+                            <div class="feature-icon bg-gradient-info shadow text-center">
+                                <i class="fas fa-chart-bar text-white"></i>
                             </div>
-                            <h6 class="text-white mt-2 mb-0">Analytics</h6>
+                            <h6 class="text-white mt-2 mb-0">
+                                <i class="fas fa-analytics me-1"></i>Analytics
+                            </h6>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="text-center">
-                            <div class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
-                                <i class="fas fa-single-02 text-lg opacity-10" aria-hidden="true"></i>
+                            <div class="feature-icon bg-gradient-success shadow text-center">
+                                <i class="fas fa-users text-white"></i>
                             </div>
-                            <h6 class="text-white mt-2 mb-0">Manage Guests</h6>
+                            <h6 class="text-white mt-2 mb-0">
+                                <i class="fas fa-user-friends me-1"></i>Manage Guests
+                            </h6>
                         </div>
                     </div>
                 </div>
@@ -207,10 +284,10 @@ function togglePassword() {
 
     if (passwordField.type === 'password') {
         passwordField.type = 'text';
-        toggleIcon.className = 'fas fa-eye-off';
+        toggleIcon.className = 'fas fa-eye-slash';
     } else {
         passwordField.type = 'password';
-        toggleIcon.className = 'fas fa-eye-17';
+        toggleIcon.className = 'fas fa-eye';
     }
 }
 
@@ -227,7 +304,7 @@ document.querySelector('form').addEventListener('submit', function() {
     const submitBtn = this.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
 
-    submitBtn.innerHTML = '<i class="fas fa-settings-gear-65 me-2"></i>Signing In...';
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing In...';
     submitBtn.disabled = true;
 
     // Re-enable if form submission fails (e.g., validation errors)
@@ -252,5 +329,65 @@ document.querySelectorAll('.form-control').forEach(function(input) {
         this.classList.remove('is-invalid', 'is-valid');
     });
 });
+
+// Add icon animations on focus
+document.querySelectorAll('.form-control').forEach(function(input) {
+    input.addEventListener('focus', function() {
+        const icon = this.parentElement.querySelector('.input-group-text i');
+        if (icon) {
+            icon.style.transform = 'scale(1.1)';
+            icon.style.transition = 'transform 0.2s ease';
+        }
+    });
+
+    input.addEventListener('blur', function() {
+        const icon = this.parentElement.querySelector('.input-group-text i');
+        if (icon) {
+            icon.style.transform = 'scale(1)';
+        }
+    });
+});
+
+// Enhanced error handling with icons
+document.addEventListener('DOMContentLoaded', function() {
+    // Add shake animation to error alerts
+    const errorAlerts = document.querySelectorAll('.alert-danger');
+    errorAlerts.forEach(function(alert) {
+        alert.style.animation = 'shake 0.5s ease-in-out';
+    });
+
+    // Add success pulse animation
+    const successAlerts = document.querySelectorAll('.alert-success');
+    successAlerts.forEach(function(alert) {
+        alert.style.animation = 'pulse 0.5s ease-in-out';
+    });
+});
+
+// CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
+    }
+
+    .feature-icon:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+        transition: transform 0.2s ease;
+    }
+`;
+document.head.appendChild(style);
 </script>
 @endpush
