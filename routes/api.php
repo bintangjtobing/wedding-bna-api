@@ -36,6 +36,8 @@ Route::get('/invitation/messages/all', function() {
 });
 Route::post('/test-broadcast', [InvitationMessageController::class, 'testBroadcast']);
 Route::get('/invitation/{username}/messages', [App\Http\Controllers\Api\InvitationMessageController::class, 'getMessagesByUsername']);
+Route::get('/test/device-detection', [App\Http\Controllers\Api\ClickLogController::class, 'testDeviceDetection']);
+Route::post('/test/device-detection', [App\Http\Controllers\Api\ClickLogController::class, 'testDeviceDetection']);
 
 
 // Route yang memerlukan autentikasi

@@ -88,7 +88,7 @@
                 <small class="text-muted">Real-time visitor insights</small>
             </div>
             <div class="card-body">
-                @if($clickStats['total_clicks'] > 0)
+                @if(isset($clickStats) && $clickStats['total_clicks'] > 0)
                 <!-- Primary Stats Row -->
                 <div class="row mb-4">
                     <div class="col-md-3">
@@ -140,7 +140,7 @@
                 </div>
 
                 <!-- Device Analytics -->
-                @if(isset($clickStats['device_breakdown']))
+                @if(isset($clickStats['device_breakdown']) && is_array($clickStats['device_breakdown']))
                 <div class="row mb-4">
                     <div class="col-md-12">
                         <h6 class="mb-3">📱 Device Analytics</h6>
@@ -180,7 +180,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <strong>First Click:</strong>
-                        @if($clickStats['first_click'])
+                        @if(isset($clickStats['first_click']) && $clickStats['first_click'])
                         {{ \Carbon\Carbon::parse($clickStats['first_click'])->format('d M Y H:i:s') }}
                         @else
                         -
@@ -188,7 +188,7 @@
                     </div>
                     <div class="col-md-6">
                         <strong>Last Click:</strong>
-                        @if($clickStats['last_click'])
+                        @if(isset($clickStats['last_click']) && $clickStats['last_click'])
                         {{ \Carbon\Carbon::parse($clickStats['last_click'])->format('d M Y H:i:s') }}
                         <small class="text-muted">({{ \Carbon\Carbon::parse($clickStats['last_click'])->diffForHumans()
                             }})</small>
@@ -410,7 +410,7 @@
     </div>
 </div>
 
-<!-- Message Logs Section (unchanged) -->
+<!-- Message Logs Section -->
 <div class="card mt-4">
     <div class="card-header">
         <h5 class="mb-0">📨 Riwayat Pengiriman</h5>
