@@ -1,3 +1,188 @@
+@section('title', 'Dashboard - Wedding Invitation')
+@section('breadcrumb', 'Dashboard')
+@section('page-title', 'Dashboard')
+
+@section('content')
+<!-- Welcome Section -->
+<div class=" row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="numbers">
+                            <p class="text-sm mb-0 text-capitalize font-weight-bold">
+                                Selamat datang,</p>
+                            <h5 class="font-weight-bolder mb-0">
+                                {{ $currentAdmin->name }}!
+                                <span class="text-success text-sm font-weight-bolder">
+                                    @if(isset($currentAdmin->role))
+                                    ({{ $currentAdmin->role == 'groom' ? 'Mempelai Pria'
+                                    : 'Mempelai Wanita' }})
+                                    @else
+                                    (Wedding Admin)
+                                    @endif
+                                </span>
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="col-4 text-end">
+                        <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
+                            <i class="ni ni-satisfied text-lg opacity-10" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards Row 1 -->
+<div class="row">
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="card">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="numbers">
+                            <p class="text-sm mb-0 text-capitalize font-weight-bold">Total
+                                Kontak</p>
+                            <h5 class="font-weight-bolder mb-0">
+                                {{ $contactCount }}
+                                <span class="text-success text-sm font-weight-bolder">kontak</span>
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="col-4 text-end">
+                        <div class="icon icon-shape bg-gradient-dark shadow text-center border-radius-md">
+                            <i class="ni ni-single-02 text-lg opacity-10" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="card">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="numbers">
+                            <p class="text-sm mb-0 text-capitalize font-weight-bold">Total
+                                Clicks</p>
+                            <h5 class="font-weight-bolder mb-0">
+                                {{ number_format($clickAnalytics['total_clicks']) }}
+                                <span class="text-info text-sm font-weight-bolder">clicks</span>
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="col-4 text-end">
+                        <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
+                            <i class="ni ni-chart-bar-32 text-lg opacity-10" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="card">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="numbers">
+                            <p class="text-sm mb-0 text-capitalize font-weight-bold">Unique
+                                Visitors</p>
+                            <h5 class="font-weight-bolder mb-0">
+                                {{ number_format($clickAnalytics['unique_visitors']) }}
+                                <span class="text-success text-sm font-weight-bolder">visitors</span>
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="col-4 text-end">
+                        <div class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
+                            <i class="ni ni-world text-lg opacity-10" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6">
+        <div class="card">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="numbers">
+                            <p class="text-sm mb-0 text-capitalize font-weight-bold">
+                                Countries</p>
+                            <h5 class="font-weight-bolder mb-0">
+                                {{ $clickAnalytics['countries_reached'] }}
+                                <span class="text-warning text-sm font-weight-bolder">negara</span>
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="col-4 text-end">
+                        <div class="icon icon-shape bg-gradient-warning shadow text-center border-radius-md">
+                            <i class="ni ni-pin-3 text-lg opacity-10" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Invitation Status Row -->
+<div class="row mt-4">
+    <div class="col-lg-7 mb-lg-0 mb-4">
+        <div class="card">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="d-flex flex-column h-100">
+                            <p class="mb-1 pt-2 text-bold">Status Undangan Saya</p>
+                            <h5 class="font-weight-bolder">{{ $contactCount }} Total Kontak
+                            </h5>
+                            <p class="mb-5">Distribusi status pengiriman undangan pernikahan
+                            </p>
+                            <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto"
+                                href="{{ route('contacts.index') }}">
+                                Lihat Semua Kontak
+                                <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
+                        <div class="bg-gradient-primary border-radius-lg h-100">
+                            <div class="position-relative d-flex align-items-center justify-content-center h-100">
+                                <canvas id="invitationChart" width="100" height="100"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card h-100 p-3">
+            <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100"
+                style="background-image: url('{{ asset('img/curved-images/curved1.jpg') }}');">
+                <span class="mask bg-gradient-dark"></span>
+                <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
+                    <h5 class="text-white font-weight-bolder mb-4 pt-2">Quick Actions</h5>
+                    <p class="text-white">Aksi cepat untuk mengelola undangan pernikahan
+                        Anda dengan mudah.</p>
+                    <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto"
+                        href="{{ route('messages.create') }}">
+                        Kirim Pesan Baru
+                        <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Overall Statistics -->
 <div class="row mt-4">
     <div class="col-lg-7 mb-lg-0 mb-4">
@@ -153,212 +338,223 @@
                                 <i class="
                                     @if($device == 'mobile') ni ni-mobile-button
                                     @elseif($device == 'desktop') ni ni-tv-2
-                                    @elseif($device == 'tablet')@extends('layouts.app')
-
-@section('title', 'Dashboard - Wedding Invitation')
-@section('breadcrumb', 'Dashboard')
-@section('page-title', 'Dashboard')
-
-@section('content')
-<!-- Welcome Section -->
-<div class=" row">
-                                    <div class="col-12">
-                                        <div class="card mb-4">
-                                            <div class="card-body p-3">
-                                                <div class="row">
-                                                    <div class="col-8">
-                                                        <div class="numbers">
-                                                            <p class="text-sm mb-0 text-capitalize font-weight-bold">
-                                                                Selamat datang,</p>
-                                                            <h5 class="font-weight-bolder mb-0">
-                                                                {{ $currentAdmin->name }}!
-                                                                <span class="text-success text-sm font-weight-bolder">
-                                                                    @if(isset($currentAdmin->role))
-                                                                    ({{ $currentAdmin->role == 'groom' ? 'Mempelai Pria'
-                                                                    : 'Mempelai Wanita' }})
-                                                                    @else
-                                                                    (Wedding Admin)
-                                                                    @endif
-                                                                </span>
-                                                            </h5>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-4 text-end">
-                                                        <div
-                                                            class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                                            <i class="ni ni-satisfied text-lg opacity-10"
-                                                                aria-hidden="true"></i>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    @elseif($device == 'tablet') ni ni-tablet-button
+                                    @else ni ni-controller @endif
+                                    text-white text-xs opacity-10" aria-hidden="true"></i>
                             </div>
-
-                            <!-- Stats Cards Row 1 -->
-                            <div class="row">
-                                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                                    <div class="card">
-                                        <div class="card-body p-3">
-                                            <div class="row">
-                                                <div class="col-8">
-                                                    <div class="numbers">
-                                                        <p class="text-sm mb-0 text-capitalize font-weight-bold">Total
-                                                            Kontak</p>
-                                                        <h5 class="font-weight-bolder mb-0">
-                                                            {{ $contactCount }}
-                                                            <span
-                                                                class="text-success text-sm font-weight-bolder">kontak</span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4 text-end">
-                                                    <div
-                                                        class="icon icon-shape bg-gradient-dark shadow text-center border-radius-md">
-                                                        <i class="ni ni-single-02 text-lg opacity-10"
-                                                            aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                                    <div class="card">
-                                        <div class="card-body p-3">
-                                            <div class="row">
-                                                <div class="col-8">
-                                                    <div class="numbers">
-                                                        <p class="text-sm mb-0 text-capitalize font-weight-bold">Total
-                                                            Clicks</p>
-                                                        <h5 class="font-weight-bolder mb-0">
-                                                            {{ number_format($clickAnalytics['total_clicks']) }}
-                                                            <span
-                                                                class="text-info text-sm font-weight-bolder">clicks</span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4 text-end">
-                                                    <div
-                                                        class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                                        <i class="ni ni-chart-bar-32 text-lg opacity-10"
-                                                            aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                                    <div class="card">
-                                        <div class="card-body p-3">
-                                            <div class="row">
-                                                <div class="col-8">
-                                                    <div class="numbers">
-                                                        <p class="text-sm mb-0 text-capitalize font-weight-bold">Unique
-                                                            Visitors</p>
-                                                        <h5 class="font-weight-bolder mb-0">
-                                                            {{ number_format($clickAnalytics['unique_visitors']) }}
-                                                            <span
-                                                                class="text-success text-sm font-weight-bolder">visitors</span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4 text-end">
-                                                    <div
-                                                        class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
-                                                        <i class="ni ni-world text-lg opacity-10"
-                                                            aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-3 col-sm-6">
-                                    <div class="card">
-                                        <div class="card-body p-3">
-                                            <div class="row">
-                                                <div class="col-8">
-                                                    <div class="numbers">
-                                                        <p class="text-sm mb-0 text-capitalize font-weight-bold">
-                                                            Countries</p>
-                                                        <h5 class="font-weight-bolder mb-0">
-                                                            {{ $clickAnalytics['countries_reached'] }}
-                                                            <span
-                                                                class="text-warning text-sm font-weight-bolder">negara</span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4 text-end">
-                                                    <div
-                                                        class="icon icon-shape bg-gradient-warning shadow text-center border-radius-md">
-                                                        <i class="ni ni-pin-3 text-lg opacity-10"
-                                                            aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div>
+                                <h6 class="mb-0 text-sm">{{ $count }}</h6>
+                                <p class="text-xs mb-0">{{ ucfirst($device) }}</p>
                             </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <div class="text-center py-4">
+                    <p class="text-muted">Belum ada data device</p>
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
 
-                            <!-- Invitation Status Row -->
-                            <div class="row mt-4">
-                                <div class="col-lg-7 mb-lg-0 mb-4">
-                                    <div class="card">
-                                        <div class="card-body p-3">
-                                            <div class="row">
-                                                <div class="col-lg-6">
-                                                    <div class="d-flex flex-column h-100">
-                                                        <p class="mb-1 pt-2 text-bold">Status Undangan Saya</p>
-                                                        <h5 class="font-weight-bolder">{{ $contactCount }} Total Kontak
-                                                        </h5>
-                                                        <p class="mb-5">Distribusi status pengiriman undangan pernikahan
-                                                        </p>
-                                                        <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto"
-                                                            href="{{ route('contacts.index') }}">
-                                                            Lihat Semua Kontak
-                                                            <i class="fas fa-arrow-right text-sm ms-1"
-                                                                aria-hidden="true"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
-                                                    <div class="bg-gradient-primary border-radius-lg h-100">
-                                                        <div
-                                                            class="position-relative d-flex align-items-center justify-content-center h-100">
-                                                            <canvas id="invitationChart" width="100"
-                                                                height="100"></canvas>
-                                                        </div>
-                                                    </div>
-                                                </div>
+<!-- Recent Activities -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header pb-0">
+                <h6>Recent Click Activities</h6>
+                <p class="text-sm">
+                    <i class="fa fa-check text-info" aria-hidden="true"></i>
+                    <span class="font-weight-bold ms-1">Aktivitas terbaru dari pengunjung undangan</span>
+                </p>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+                @if($clickAnalytics['recent_clicks']->count() > 0)
+                <div class="table-responsive p-0">
+                    <table class="table align-items-center mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Contact
+                                </th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                    Location</th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Device</th>
+                                <th
+                                    class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    Time</th>
+                                <th class="text-secondary opacity-7"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($clickAnalytics['recent_clicks'] as $click)
+                            <tr>
+                                <td>
+                                    <div class="d-flex px-2 py-1">
+                                        <div>
+                                            <div class="avatar avatar-sm bg-gradient-secondary me-3">
+                                                <span class="text-white text-xs">{{ substr($click->name, 0, 2) }}</span>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-5">
-                                    <div class="card h-100 p-3">
-                                        <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100"
-                                            style="background-image: url('{{ asset('img/curved-images/curved1.jpg') }}');">
-                                            <span class="mask bg-gradient-dark"></span>
-                                            <div
-                                                class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
-                                                <h5 class="text-white font-weight-bolder mb-4 pt-2">Quick Actions</h5>
-                                                <p class="text-white">Aksi cepat untuk mengelola undangan pernikahan
-                                                    Anda dengan mudah.</p>
-                                                <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto"
-                                                    href="{{ route('messages.create') }}">
-                                                    Kirim Pesan Baru
-                                                    <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
-                                                </a>
-                                            </div>
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="mb-0 text-sm">{{ $click->name }}</h6>
+                                            <p class="text-xs text-secondary mb-0">@{{ $click->username }}</p>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                </td>
+                                <td>
+                                    @if($click->country)
+                                    <p class="text-xs font-weight-bold mb-0">{{ $click->country_emoji }} {{ $click->city
+                                        }}, {{ $click->country }}</p>
+                                    <p class="text-xs text-secondary mb-0">{{ $click->ip_address }}</p>
+                                    @else
+                                    <p class="text-xs text-secondary mb-0">Unknown Location</p>
+                                    @endif
+                                </td>
+                                <td class="align-middle text-center text-sm">
+                                    @if($click->device_name)
+                                    <span class="badge badge-sm
+                                        @if($click->device_type == 'mobile') bg-gradient-success
+                                        @elseif($click->device_type == 'desktop') bg-gradient-primary
+                                        @elseif($click->device_type == 'tablet') bg-gradient-info
+                                        @else bg-gradient-secondary @endif">
+                                        {{ $click->device_name }}
+                                    </span>
+                                    <p class="text-xs text-secondary mb-0">{{ $click->browser_name }}</p>
+                                    @else
+                                    <span class="text-secondary text-xs font-weight-bold">Unknown</span>
+                                    @endif
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-secondary text-xs font-weight-bold">{{
+                                        $click->clicked_at->diffForHumans() }}</span>
+                                </td>
+                                <td class="align-middle">
+                                    <a href="{{ route('contacts.show', $click->contact_id) }}"
+                                        class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
+                                        data-original-title="View contact">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @else
+                <div class="text-center py-4">
+                    <img src="{{ asset('img/illustrations/rocket-white.png') }}" alt="rocket" class="img-fluid"
+                        style="max-height: 200px;">
+                    <h5 class="mt-3">Belum ada aktivitas click</h5>
+                    <p class="text-muted">Aktivitas akan muncul setelah tamu mengakses undangan.</p>
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
 
-                            <!-- Overall Statistics -->
-                            <div class="row mt-4">
-                                <div class="col
+@endsection
+
+@push('scripts')
+<script>
+    // Invitation Status Chart
+@if($contactCount > 0)
+var ctx1 = document.getElementById("invitationChart").getContext("2d");
+
+var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+gradientStroke1.addColorStop(1, 'rgba(203, 12, 159, 0.2)');
+gradientStroke1.addColorStop(0.2, 'rgba(72, 72, 176, 0.0)');
+gradientStroke1.addColorStop(0, 'rgba(203, 12, 159, 0)');
+
+new Chart(ctx1, {
+    type: "doughnut",
+    data: {
+        labels: ['Terkirim', 'Belum Dikirim', 'Gagal'],
+        datasets: [{
+            label: "Status",
+            weight: 9,
+            cutout: 60,
+            tension: 0.9,
+            pointRadius: 2,
+            borderWidth: 2,
+            backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+            data: [{{ $sentInvitations }}, {{ $pendingInvitations }}, {{ $failedInvitations }}],
+            fill: false
+        }],
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
+            }
+        },
+        interaction: {
+            intersect: false,
+            mode: 'index',
+        },
+        scales: {
+            y: {
+                display: false
+            },
+            x: {
+                display: false
+            }
+        }
+    }
+});
+@endif
+
+// Device Breakdown Chart
+@if($clickAnalytics['device_breakdown']->count() > 0)
+var ctx2 = document.getElementById("deviceBreakdownChart").getContext("2d");
+
+new Chart(ctx2, {
+    type: "doughnut",
+    data: {
+        labels: {!! json_encode(array_keys($clickAnalytics['device_breakdown']->toArray())) !!}.map(function(label) {
+            return label.charAt(0).toUpperCase() + label.slice(1);
+        }),
+        datasets: [{
+            label: "Device",
+            weight: 9,
+            cutout: 50,
+            tension: 0.9,
+            pointRadius: 2,
+            borderWidth: 2,
+            backgroundColor: ['#28a745', '#007bff', '#17a2b8', '#6c757d'],
+            data: {!! json_encode(array_values($clickAnalytics['device_breakdown']->toArray())) !!},
+            fill: false
+        }],
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
+            }
+        },
+        interaction: {
+            intersect: false,
+            mode: 'index',
+        },
+        scales: {
+            y: {
+                display: false
+            },
+            x: {
+                display: false
+            }
+        }
+    }
+});
+@endif
+</script>
+@endpush
