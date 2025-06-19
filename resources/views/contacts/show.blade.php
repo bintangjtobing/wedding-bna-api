@@ -412,8 +412,32 @@
                                 <br><small class="text-info">{{ $log->continent }}</small>
                                 @endif
                                 @if($log->latitude && $log->longitude)
-                                <br><small class="text-success">📍 {{ number_format($log->latitude, 4) }}, {{
-                                    number_format($log->longitude, 4) }}</small>
+                                <br>
+                                <div class="dropdown d-inline">
+                                    <a href="https://www.google.com/maps?q={{ $log->latitude }},{{ $log->longitude }}"
+                                        target="_blank" class="text-success text-decoration-none dropdown-toggle"
+                                        data-bs-toggle="dropdown" title="Open in Maps">
+                                        <small>📍 {{ number_format($log->latitude, 4) }}, {{
+                                            number_format($log->longitude, 4) }}</small>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item"
+                                                href="https://www.google.com/maps?q={{ $log->latitude }},{{ $log->longitude }}"
+                                                target="_blank">🗺️ Google Maps</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="https://maps.apple.com/?q={{ $log->latitude }},{{ $log->longitude }}"
+                                                target="_blank">🍎 Apple Maps</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="https://waze.com/ul?ll={{ $log->latitude }},{{ $log->longitude }}&navigate=yes"
+                                                target="_blank">🚗 Waze</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="https://www.openstreetmap.org/?mlat={{ $log->latitude }}&mlon={{ $log->longitude }}&zoom=15"
+                                                target="_blank">🌍 OpenStreetMap</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="https://www.bing.com/maps?cp={{ $log->latitude }}~{{ $log->longitude }}&lvl=15"
+                                                target="_blank">🔍 Bing Maps</a></li>
+                                    </ul>
+                                </div>
                                 @endif
                                 @if($log->zipcode)
                                 <br><small class="text-warning">📮 {{ $log->zipcode }}</small>
