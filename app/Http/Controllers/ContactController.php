@@ -4,10 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use Illuminate\Http\Request;
+use App\Services\ClickLogService;
 use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
 {
+    protected $clickLogService;
+
+    public function __construct(ClickLogService $clickLogService)
+    {
+        $this->clickLogService = $clickLogService;
+    }
     public function index(Request $request)
     {
         $admin = Auth::guard('admin')->user();
@@ -46,7 +53,9 @@ class ContactController extends Controller
         // Eager load relasi yang dibutuhkan untuk mengurangi jumlah query
         $contact->load(['admin', 'messageLogs.message', 'messageLogs.admin']);
 
-        return view('contacts.show', compact('contact'));
+        $clickStats = $this->clickLogService->getClickStats($contact);
+
+        return view('contacts.show', compact('contact', 'clickStats'));
     }
     public function create()
     {

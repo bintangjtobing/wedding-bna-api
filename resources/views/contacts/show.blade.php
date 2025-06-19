@@ -23,16 +23,16 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4 fw-bold">Username</div>
-                    <div class="col-md-8">{{ $contact->username }}</div>
+                    <div class="col-md-8">{{ $contact->username ?? '-' }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4 fw-bold">Nomor Telepon</div>
-                    <div class="col-md-8">+{{ $contact->country_code }} {{ $contact->phone_number }}</div>
+                    <div class="col-md-8">+{{ $contact->country_code ?? '' }} {{ $contact->phone_number }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4 fw-bold">Negara</div>
                     <div class="col-md-8">
-                        {{ $contact->country }}
+                        {{ $contact->country ?? '-' }}
                         @if($contact->country == 'ID')
                         (Indonesia)
                         @elseif($contact->country == 'MY')
@@ -81,44 +81,102 @@
             </div>
         </div>
 
-        <!-- Click Analytics Section -->
-        @php
-        $clickStats = $contact->click_stats;
-        @endphp
-
+        <!-- Enhanced Click Analytics Section -->
         <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">Click Analytics</h5>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">📊 Click Analytics</h5>
+                <small class="text-muted">Real-time visitor insights</small>
             </div>
             <div class="card-body">
                 @if($clickStats['total_clicks'] > 0)
+                <!-- Primary Stats Row -->
                 <div class="row mb-4">
                     <div class="col-md-3">
-                        <div class="text-center">
-                            <h3 class="text-primary">{{ $clickStats['total_clicks'] }}</h3>
-                            <p class="mb-0">Total Clicks</p>
+                        <div class="text-center p-3 bg-primary bg-opacity-10 rounded">
+                            <h3 class="text-primary mb-1">{{ $clickStats['total_clicks'] }}</h3>
+                            <p class="mb-0 small">Total Clicks</p>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="text-center">
-                            <h3 class="text-success">{{ $clickStats['unique_ips'] }}</h3>
-                            <p class="mb-0">Unique Visitors</p>
+                        <div class="text-center p-3 bg-success bg-opacity-10 rounded">
+                            <h3 class="text-success mb-1">{{ $clickStats['unique_ips'] }}</h3>
+                            <p class="mb-0 small">Unique Visitors</p>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="text-center">
-                            <h3 class="text-info">{{ $clickStats['countries'] }}</h3>
-                            <p class="mb-0">Countries</p>
+                        <div class="text-center p-3 bg-info bg-opacity-10 rounded">
+                            <h3 class="text-info mb-1">{{ $clickStats['countries'] }}</h3>
+                            <p class="mb-0 small">Countries</p>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="text-center">
-                            <h3 class="text-warning">{{ $clickStats['cities'] }}</h3>
-                            <p class="mb-0">Cities</p>
+                        <div class="text-center p-3 bg-warning bg-opacity-10 rounded">
+                            <h3 class="text-warning mb-1">{{ $clickStats['cities'] }}</h3>
+                            <p class="mb-0 small">Cities</p>
                         </div>
                     </div>
                 </div>
 
+                <!-- Time-based Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="text-center p-2 border rounded">
+                            <h4 class="text-secondary mb-1">{{ $clickStats['today_clicks'] ?? 0 }}</h4>
+                            <p class="mb-0 small">Today</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center p-2 border rounded">
+                            <h4 class="text-secondary mb-1">{{ $clickStats['this_week_clicks'] ?? 0 }}</h4>
+                            <p class="mb-0 small">This Week</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center p-2 border rounded">
+                            <h4 class="text-secondary mb-1">{{ $clickStats['this_month_clicks'] ?? 0 }}</h4>
+                            <p class="mb-0 small">This Month</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Device Analytics -->
+                @if(isset($clickStats['device_breakdown']))
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <h6 class="mb-3">📱 Device Analytics</h6>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="text-center p-2 bg-light rounded">
+                                    <strong>{{ $clickStats['device_breakdown']['mobile'] ?? 0 }}</strong>
+                                    <br><small class="text-muted">Mobile</small>
+                                    <br><small class="badge bg-primary">{{ $clickStats['mobile_percentage'] ?? 0
+                                        }}%</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-2 bg-light rounded">
+                                    <strong>{{ $clickStats['device_breakdown']['desktop'] ?? 0 }}</strong>
+                                    <br><small class="text-muted">Desktop</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-2 bg-light rounded">
+                                    <strong>{{ $clickStats['device_breakdown']['tablet'] ?? 0 }}</strong>
+                                    <br><small class="text-muted">Tablet</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-2 bg-light rounded">
+                                    <strong>{{ $clickStats['device_breakdown']['robot'] ?? 0 }}</strong>
+                                    <br><small class="text-muted">Bots</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Time Information -->
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <strong>First Click:</strong>
@@ -132,31 +190,70 @@
                         <strong>Last Click:</strong>
                         @if($clickStats['last_click'])
                         {{ \Carbon\Carbon::parse($clickStats['last_click'])->format('d M Y H:i:s') }}
+                        <small class="text-muted">({{ \Carbon\Carbon::parse($clickStats['last_click'])->diffForHumans()
+                            }})</small>
                         @else
                         -
                         @endif
                     </div>
                 </div>
 
-                @if(count($clickStats['top_countries']) > 0)
+                <!-- Top Countries -->
+                @if(isset($clickStats['top_countries']) && count($clickStats['top_countries']) > 0)
                 <div class="mb-3">
-                    <h6>Top Countries:</h6>
-                    @foreach($clickStats['top_countries'] as $country => $count)
-                    <span class="badge bg-secondary me-1">{{ $country }}: {{ $count }}</span>
-                    @endforeach
+                    <h6>🌍 Top Countries:</h6>
+                    <div class="d-flex flex-wrap gap-1">
+                        @foreach($clickStats['top_countries'] as $country => $count)
+                        <span class="badge bg-secondary">{{ $country }}: {{ $count }}</span>
+                        @endforeach
+                    </div>
                 </div>
                 @endif
 
-                @if(count($clickStats['top_cities']) > 0)
+                <!-- Top Cities -->
+                @if(isset($clickStats['top_cities']) && count($clickStats['top_cities']) > 0)
                 <div class="mb-3">
-                    <h6>Top Cities:</h6>
-                    @foreach($clickStats['top_cities'] as $city => $count)
-                    <span class="badge bg-info me-1">{{ $city }}: {{ $count }}</span>
-                    @endforeach
+                    <h6>🏙️ Top Cities:</h6>
+                    <div class="d-flex flex-wrap gap-1">
+                        @foreach($clickStats['top_cities'] as $city => $count)
+                        <span class="badge bg-info">{{ $city }}: {{ $count }}</span>
+                        @endforeach
+                    </div>
                 </div>
                 @endif
+
+                <!-- Top Devices -->
+                @if(isset($clickStats['top_devices']) && count($clickStats['top_devices']) > 0)
+                <div class="mb-3">
+                    <h6>📱 Popular Devices:</h6>
+                    <div class="d-flex flex-wrap gap-1">
+                        @foreach($clickStats['top_devices'] as $device => $count)
+                        <span class="badge bg-dark">{{ $device }}: {{ $count }}</span>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <!-- Top Browsers -->
+                @if(isset($clickStats['browsers']) && count($clickStats['browsers']) > 0)
+                <div class="mb-3">
+                    <h6>🌐 Browsers:</h6>
+                    <div class="d-flex flex-wrap gap-1">
+                        @foreach($clickStats['browsers'] as $browser => $count)
+                        <span class="badge bg-warning text-dark">{{ $browser }}: {{ $count }}</span>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
                 @else
-                <p class="text-center text-muted">Belum ada aktivitas click untuk kontak ini.</p>
+                <div class="text-center py-4">
+                    <div class="text-muted">
+                        <i class="bi bi-graph-up" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3">Belum ada aktivitas click</h5>
+                        <p>Kontak ini belum pernah diklik oleh pengunjung.</p>
+                    </div>
+                </div>
                 @endif
             </div>
         </div>
@@ -205,16 +302,17 @@
             <div class="card-body">
                 <p>Nama Admin: <strong>{{ $contact->admin->name }}</strong></p>
                 <p>Email Admin: <strong>{{ $contact->admin->email }}</strong></p>
-                <p>WhatsApp: <strong>{{ $contact->admin->whatsapp_number }}</strong></p>
+                <p>WhatsApp: <strong>{{ $contact->admin->whatsapp_number ?? '-' }}</strong></p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Click Logs Detail -->
+<!-- Enhanced Click Logs Detail -->
 <div class="card mt-4">
-    <div class="card-header">
-        <h5 class="mb-0">Riwayat Click Activities</h5>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">📋 Riwayat Click Activities</h5>
+        <small class="text-muted">Recent 20 activities</small>
     </div>
     <div class="card-body">
         @php
@@ -222,72 +320,100 @@
         @endphp
 
         @if($clickLogs->isEmpty())
-        <p class="text-center">Belum ada riwayat click untuk kontak ini.</p>
+        <div class="text-center py-4">
+            <i class="bi bi-activity text-muted" style="font-size: 3rem;"></i>
+            <h5 class="mt-3 text-muted">Belum ada riwayat click</h5>
+            <p class="text-muted">Aktivitas click akan muncul di sini setelah kontak dikunjungi.</p>
+        </div>
         @else
         <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
                     <tr>
-                        <th>Waktu</th>
-                        <th>IP Address</th>
-                        <th>Location</th>
-                        <th>Device</th>
-                        <th>Browser</th>
+                        <th>⏰ Waktu</th>
+                        <th>🌐 IP Address</th>
+                        <th>📍 Location</th>
+                        <th>📱 Device</th>
+                        <th>🌐 Browser & OS</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($clickLogs as $log)
                     <tr>
-                        <td>{{ $log->clicked_at->format('d M Y H:i:s') }}</td>
-                        <td><code>{{ $log->ip_address }}</code></td>
+                        <td>
+                            <strong>{{ $log->clicked_at->format('d M Y') }}</strong><br>
+                            <small class="text-muted">{{ $log->clicked_at->format('H:i:s') }}</small><br>
+                            <small class="badge bg-secondary">{{ $log->clicked_at->diffForHumans() }}</small>
+                        </td>
+                        <td>
+                            <code class="small">{{ $log->ip_address }}</code>
+                        </td>
                         <td>
                             @if($log->country)
-                            {{ $log->country_emoji }} {{ $log->city }}, {{ $log->country }}
-                            @if($log->region)
-                            <br><small class="text-muted">{{ $log->region }}</small>
-                            @endif
+                            <div>
+                                <strong>{{ $log->country_emoji }} {{ $log->city ?? 'Unknown City' }}</strong><br>
+                                <small class="text-muted">{{ $log->country }}</small>
+                                @if($log->region)
+                                <br><small class="text-muted">{{ $log->region }}</small>
+                                @endif
+                            </div>
                             @else
-                            <span class="text-muted">Unknown</span>
+                            <span class="text-muted">🌍 Unknown Location</span>
                             @endif
                         </td>
                         <td>
-                            @if($log->device_name)
-                            {{ $log->device_name }}
-                            @if($log->device_brand)
-                            <br><small class="text-muted">{{ $log->device_brand }} {{ $log->device_type }}</small>
-                            @endif
-                            @else
-                            <span class="text-muted">Unknown</span>
-                            @endif
+                            <div>
+                                @if($log->device_name)
+                                <strong>{{ $log->device_name }}</strong><br>
+                                @endif
+
+                                @if($log->device_brand)
+                                <small class="text-muted">{{ $log->device_brand }}</small>
+                                @endif
+
+                                @if($log->device_type)
+                                <br><span class="badge
+                                    @if($log->device_type == 'mobile') bg-success
+                                    @elseif($log->device_type == 'desktop') bg-primary
+                                    @elseif($log->device_type == 'tablet') bg-info
+                                    @elseif($log->device_type == 'robot') bg-danger
+                                    @else bg-secondary @endif
+                                ">{{ ucfirst($log->device_type) }}</span>
+                                @endif
+                            </div>
                         </td>
                         <td>
-                            @if($log->browser_name)
-                            {{ $log->browser_name }}
-                            @if($log->os_name)
-                            <br><small class="text-muted">{{ $log->os_name }}</small>
-                            @endif
-                            @else
-                            <span class="text-muted">Unknown</span>
-                            @endif
+                            <div>
+                                @if($log->browser_name)
+                                <strong>{{ $log->browser_name }}</strong><br>
+                                @endif
+
+                                @if($log->os_name)
+                                <small class="text-muted">{{ $log->os_name }}</small>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
+
         @if($contact->clickLogs()->count() > 20)
         <div class="text-center mt-3">
-            <small class="text-muted">Menampilkan 20 aktivitas terbaru dari {{ $contact->clickLogs()->count() }} total
-                click</small>
+            <small class="text-muted">
+                Menampilkan 20 aktivitas terbaru dari <strong>{{ $contact->clickLogs()->count() }}</strong> total click
+            </small>
         </div>
         @endif
         @endif
     </div>
 </div>
 
+<!-- Message Logs Section (unchanged) -->
 <div class="card mt-4">
     <div class="card-header">
-        <h5 class="mb-0">Riwayat Pengiriman</h5>
+        <h5 class="mb-0">📨 Riwayat Pengiriman</h5>
     </div>
     <div class="card-body">
         @if($contact->messageLogs->isEmpty())
