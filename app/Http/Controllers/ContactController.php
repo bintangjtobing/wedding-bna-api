@@ -174,22 +174,49 @@ class ContactController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone_number' => 'required|string|max:20',
-        ]);
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'username' => 'nullable|string|max:100|unique:contacts,username',
+        'phone_number' => 'required|string|max:20',
+        'country' => 'required|string|size:2',
+        'country_code' => 'required|string|max:5',
+        'greeting' => 'nullable|string|max:50',
+        'save_action' => 'required|in:save,save_and_add',
+    ]);
 
-        $contact = new Contact([
-            'name' => $validated['name'],
-            'phone_number' => $validated['phone_number'],
-        ]);
+    // Buat kontak baru
+    $contact = new Contact([
+        'name' => $validated['name'],
+        'username' => $validated['username'],
+        'phone_number' => $validated['phone_number'],
+        'country' => $validated['country'],
+        'country_code' => $validated['country_code'],
+        'greeting' => $validated['greeting'],
+    ]);
 
-        Auth::guard('admin')->user()->contacts()->save($contact);
+    Auth::guard('admin')->user()->contacts()->save($contact);
 
+    // Hitung jumlah kontak yang ditambahkan hari ini (untuk progress indicator)
+    $todayContactsCount = Auth::guard('admin')->user()->contacts()
+        ->whereDate('created_at', today())
+        ->count();
+
+    // Tentukan redirect berdasarkan aksi yang dipilih
+    if ($validated['save_action'] === 'save_and_add') {
+        return redirect()->route('contacts.create')
+            ->with('success', "Kontak '{$contact->name}' berhasil ditambahkan.")
+            ->with('contacts_added_count', $todayContactsCount)
+            ->with('last_added_contact', [
+                'name' => $contact->name,
+                'country' => $contact->country,
+                'greeting' => $contact->greeting
+            ]);
+    } else {
         return redirect()->route('contacts.index')
-            ->with('success', 'Kontak berhasil ditambahkan.');
+            ->with('success', "Kontak '{$contact->name}' berhasil ditambahkan.");
     }
+}
 
     public function edit(Contact $contact)
     {

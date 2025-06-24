@@ -5,8 +5,11 @@
 <div class="card">
     <div class="card-header">Tambah Kontak Baru</div>
     <div class="card-body">
-        <form action="{{ route('contacts.store') }}" method="POST">
+        <form action="{{ route('contacts.store') }}" method="POST" id="contactForm">
             @csrf
+            <!-- Input hidden untuk menentukan aksi setelah simpan -->
+            <input type="hidden" name="save_action" id="save_action" value="save">
+
             <div class="mb-3">
                 <label for="name" class="form-label">Nama</label>
                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name"
@@ -75,50 +78,163 @@
                 @enderror
             </div>
 
-            <button type="submit" class="btn btn-primary">Simpan</button>
-            <a href="{{ route('contacts.index') }}" class="btn btn-secondary">Batal</a>
+            <!-- Tombol dengan opsi berbeda -->
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-primary" onclick="setSaveAction('save')">
+                    <i class="bi bi-check-lg"></i> Simpan
+                </button>
+                <button type="submit" class="btn btn-success" onclick="setSaveAction('save_and_add')">
+                    <i class="bi bi-plus-circle"></i> Simpan & Tambahkan yang Lain
+                </button>
+                <a href="{{ route('contacts.index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Batal
+                </a>
+            </div>
+
+            <!-- Info helper -->
+            <div class="mt-3">
+                <small class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    Gunakan "Simpan & Tambahkan yang Lain" untuk menambahkan beberapa kontak secara berturut-turut
+                </small>
+            </div>
         </form>
     </div>
 </div>
 
+<!-- Progress indicator dan last added contact info -->
+@if(session('contacts_added_count'))
+<div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+    <i class="bi bi-check-circle"></i>
+    <strong>Berhasil!</strong> Kontak "{{ session('last_added_contact.name') }}" telah ditambahkan.
+    Total hari ini: {{ session('contacts_added_count') }} kontak.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+@endif
+
+@if(session('last_added_contact'))
+<div class="card mt-3 border-success">
+    <div class="card-header bg-success text-white">
+        <i class="bi bi-magic"></i> Quick Fill
+    </div>
+    <div class="card-body">
+        <p class="mb-2">Kontak terakhir menggunakan:</p>
+        <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="btn btn-sm btn-outline-success"
+                onclick="fillCountry('{{ session('last_added_contact.country') }}')">
+                Negara: {{ session('last_added_contact.country') }}
+            </button>
+            @if(session('last_added_contact.greeting'))
+            <button type="button" class="btn btn-sm btn-outline-success"
+                onclick="fillGreeting('{{ session('last_added_contact.greeting') }}')">
+                Panggilan: {{ session('last_added_contact.greeting') }}
+            </button>
+            @endif
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearQuickFill()">
+                <i class="bi bi-x"></i> Sembunyikan
+            </button>
+        </div>
+    </div>
+</div>
+@endif
+
 <script>
-    // Script untuk mengubah kode negara secara otomatis saat negara berubah
-    document.addEventListener('DOMContentLoaded', function() {
+    // Script untuk mengatur aksi simpan
+function setSaveAction(action) {
+    document.getElementById('save_action').value = action;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto focus ke field nama saat halaman dimuat
+    document.getElementById('name').focus();
+
+    const countrySelect = document.getElementById('country');
+    const countryCodeInput = document.getElementById('country_code');
+    const countryCodeMap = {
+        'ID': '62',
+        'MY': '60',
+        'SG': '65',
+        'US': '1',
+        // Tambahkan kode negara lainnya
+    };
+
+    countrySelect.addEventListener('change', function() {
+        const countryCode = countryCodeMap[this.value];
+        if (countryCode) {
+            countryCodeInput.value = countryCode;
+        }
+    });
+
+    // Script untuk membuat username otomatis dari nama
+    const nameInput = document.getElementById('name');
+    const usernameInput = document.getElementById('username');
+
+    nameInput.addEventListener('input', function() {
+        if (!usernameInput.value) {
+            // Ubah ke huruf kecil dan ganti spasi dengan tanda hubung
+            const username = this.value.toLowerCase().replace(/\s+/g, '-')
+                // Hilangkan karakter khusus
+                .replace(/[^\w\-]+/g, '')
+                // Hilangkan tanda hubung berurutan
+                .replace(/\-\-+/g, '-')
+                // Hilangkan tanda hubung di awal dan akhir
+                .replace(/^-+/, '').replace(/-+$/, '');
+
+            usernameInput.value = username;
+        }
+    });
+
+    // Quick fill functions
+    window.fillCountry = function(country) {
         const countrySelect = document.getElementById('country');
         const countryCodeInput = document.getElementById('country_code');
-        const countryCodeMap = {
-            'ID': '62',
-            'MY': '60',
-            'SG': '65',
-            'US': '1',
-            // Tambahkan kode negara lainnya
-        };
 
-        countrySelect.addEventListener('change', function() {
-            const countryCode = countryCodeMap[this.value];
-            if (countryCode) {
-                countryCodeInput.value = countryCode;
-            }
-        });
+        countrySelect.value = country;
+        // Trigger change event to update country code
+        countrySelect.dispatchEvent(new Event('change'));
+    };
 
-        // Script untuk membuat username otomatis dari nama
-        const nameInput = document.getElementById('name');
-        const usernameInput = document.getElementById('username');
+    window.fillGreeting = function(greeting) {
+        document.getElementById('greeting').value = greeting;
+    };
 
-        nameInput.addEventListener('input', function() {
-            if (!usernameInput.value) {
-                // Ubah ke huruf kecil dan ganti spasi dengan tanda hubung
-                const username = this.value.toLowerCase().replace(/\s+/g, '-')
-                    // Hilangkan karakter khusus
-                    .replace(/[^\w\-]+/g, '')
-                    // Hilangkan tanda hubung berurutan
-                    .replace(/\-\-+/g, '-')
-                    // Hilangkan tanda hubung di awal dan akhir
-                    .replace(/^-+/, '').replace(/-+$/, '');
+    window.clearQuickFill = function() {
+        const quickFillCard = document.querySelector('.card.border-success');
+        if (quickFillCard) {
+            quickFillCard.style.display = 'none';
+        }
+    };
 
-                usernameInput.value = username;
-            }
-        });
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl + Enter untuk "Simpan & Tambahkan yang Lain"
+        if (e.ctrlKey && e.key === 'Enter') {
+            e.preventDefault();
+            setSaveAction('save_and_add');
+            document.getElementById('contactForm').submit();
+        }
+        // Escape untuk batal
+        else if (e.key === 'Escape') {
+            window.location.href = "{{ route('contacts.index') }}";
+        }
     });
+});
 </script>
+
+<style>
+    /* Animasi untuk feedback visual */
+    .btn {
+        transition: all 0.2s ease;
+    }
+
+    .btn:active {
+        transform: translateY(1px);
+    }
+
+    /* Highlight untuk field yang focus */
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+</style>
 @endsection
