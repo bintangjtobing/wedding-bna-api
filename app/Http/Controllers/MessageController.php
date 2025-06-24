@@ -41,9 +41,9 @@ class MessageController extends Controller
         ));
     }
 
-    private function sendWhatsAppMessage($apiKey, $phoneNumber, $message, $recipientName = null)
+    private function sendWhatsAppMessage($apiKey, $phoneNumber, $message, $recipientName = null, $countryCode = '62')
     {
-        return $this->whatsappService->sendMessage($apiKey, $phoneNumber, $message, $recipientName);
+        return $this->whatsappService->sendMessage($apiKey, $phoneNumber, $message, $recipientName, $countryCode);
     }
 
     public function send(Request $request)
@@ -123,7 +123,8 @@ class MessageController extends Controller
                     $admin->whatsapp_api_key,
                     $contact->phone_number,
                     $personalizedMessage,
-                    $contact->name // Nama kontak untuk Fonnte API
+                    $contact->name, // Nama kontak untuk Fonnte API
+                    $contact->country_code
                 );
 
                 // Update status log pesan dan status undangan di kontak
@@ -239,7 +240,8 @@ class MessageController extends Controller
                     $admin->whatsapp_api_key,
                     $contact->phone_number,
                     $personalizedMessage,
-                    $contact->name
+                    $contact->name,
+                    $contact->country_code
                 );
 
                 // Update status log pesan dan status undangan di kontak
@@ -347,7 +349,8 @@ class MessageController extends Controller
                     $admin->whatsapp_api_key,
                     $contact->phone_number,
                     $personalizedMessage,
-                    $contact->name
+                    $contact->name,
+                    $contact->country_code
                 );
 
                 // Update status log pesan dan status undangan di kontak

@@ -159,19 +159,22 @@ class InvitationMessageController extends Controller
                 $admin->whatsapp_api_key,
                 $contact->phone_number,
                 $feedbackMessage,
-                $contact->name
+                $contact->name,
+                $contact->country_code ?: '62' // Default ke Indonesia jika country code tidak ada
             );
 
             // Log hasil pengiriman
             if ($result['success']) {
                 Log::info('Feedback WhatsApp berhasil dikirim', [
                     'contact_id' => $contact->id,
-                    'phone' => $contact->phone_number
+                    'phone' => $contact->phone_number,
+                    'country_code' => $contact->country_code,
                 ]);
             } else {
                 Log::error('Gagal mengirim feedback WhatsApp', [
                     'contact_id' => $contact->id,
                     'phone' => $contact->phone_number,
+                    'country_code' => $contact->country_code,
                     'error' => $result['error'] ?? 'Unknown error'
                 ]);
             }

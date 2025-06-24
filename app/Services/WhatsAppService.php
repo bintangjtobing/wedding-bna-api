@@ -14,9 +14,10 @@ class WhatsAppService
      * @param  string  $phoneNumber   Nomor telepon penerima
      * @param  string  $message       Isi pesan
      * @param  string  $recipientName Nama penerima (opsional)
+     * @param  string  $countryCode   Kode negara (default: 62)
      * @return array
      */
-    public function sendMessage($apiKey, $phoneNumber, $message, $recipientName = null)
+    public function sendMessage($apiKey, $phoneNumber, $message, $recipientName = null, $countryCode = '62')
     {
         try {
             // Persiapan nomor telepon
@@ -45,7 +46,7 @@ class WhatsAppService
                 CURLOPT_POSTFIELDS => [
                     'target' => $target,
                     'message' => $message,
-                    'countryCode' => '62', // Kode negara Indonesia
+                    'countryCode' => $countryCode, // Menggunakan parameter countryCode
                     'typing' => false,
                     'delay' => '1',
                 ],
@@ -65,6 +66,7 @@ class WhatsAppService
             // Log respons untuk debugging
             Log::info('Fonnte API Response', [
                 'phone' => $phoneNumber,
+                'country_code' => $countryCode,
                 'response' => $response,
                 'http_code' => $httpcode
             ]);
@@ -97,6 +99,7 @@ class WhatsAppService
             // Log error
             Log::error('Error sending WhatsApp message', [
                 'phone' => $phoneNumber,
+                'country_code' => $countryCode,
                 'error' => $e->getMessage()
             ]);
 
@@ -115,9 +118,10 @@ class WhatsAppService
      * @param  string  $message       Isi pesan
      * @param  string  $imageUrl      URL gambar yang akan dikirim
      * @param  string  $recipientName Nama penerima (opsional)
+     * @param  string  $countryCode   Kode negara (default: 62)
      * @return array
      */
-    public function sendImageMessage($apiKey, $phoneNumber, $message, $imageUrl, $recipientName = null)
+    public function sendImageMessage($apiKey, $phoneNumber, $message, $imageUrl, $recipientName = null, $countryCode = '62')
     {
         try {
             // Persiapan nomor telepon
@@ -146,7 +150,7 @@ class WhatsAppService
                     'target' => $target,
                     'message' => $message,
                     'url' => $imageUrl, // URL gambar
-                    'countryCode' => '62',
+                    'countryCode' => $countryCode, // Menggunakan parameter countryCode
                     'typing' => false,
                     'delay' => '1',
                 ],
@@ -198,87 +202,37 @@ class WhatsAppService
      * Mengirim pesan WhatsApp massal ke beberapa penerima menggunakan Fonnte API
      *
      * @param  string  $apiKey    API key dari Fonnte
-     * @param  array   $contacts  Array kontak (phoneNumber dan name)
+     * @param  array   $contacts  Array kontak (phoneNumber, name, dan countryCode)
      * @param  string  $message   Isi pesan
      * @return array
      */
     public function sendBulkMessage($apiKey, $contacts, $message)
     {
-        try {
-            // Format target untuk Fonnte
-            $targets = [];
-            foreach ($contacts as $contact) {
-                $phone = ltrim($contact['phone_number'], '+');
-                if (isset($contact['name'])) {
-                    $targets[] = $phone . '|' . $contact['name'];
-                } else {
-                    $targets[] = $phone;
-                }
-            }
+        $results = [];
 
-            $targetString = implode(',', $targets);
+        // Kirim satu per satu untuk memastikan country code yang benar
+        foreach ($contacts as $contact) {
+            $countryCode = $contact['country_code'] ?? '62';
+            $result = $this->sendMessage(
+                $apiKey,
+                $contact['phone_number'],
+                $message,
+                $contact['name'] ?? null,
+                $countryCode
+            );
 
-            // Inisialisasi cURL
-            $curl = curl_init();
-
-            // Set opsi cURL
-            curl_setopt_array($curl, [
-                CURLOPT_URL => 'https://api.fonnte.com/send',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 60, // Waktu timeout lebih lama untuk bulk message
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => [
-                    'target' => $targetString,
-                    'message' => $message,
-                    'countryCode' => '62',
-                    'typing' => false,
-                    'delay' => '1',
-                ],
-                CURLOPT_HTTPHEADER => [
-                    'Authorization: ' . $apiKey
-                ],
-            ]);
-
-            // Eksekusi cURL
-            $response = curl_exec($curl);
-            $err = curl_error($curl);
-
-            // Tutup koneksi cURL
-            curl_close($curl);
-
-            // Handle error
-            if ($err) {
-                return [
-                    'success' => false,
-                    'error' => $err,
-                ];
-            }
-
-            // Parse JSON response
-            $responseData = json_decode($response, true);
-
-            // Cek status dari respons API
-            if (isset($responseData['status']) && $responseData['status'] === true) {
-                return [
-                    'success' => true,
-                    'response' => $responseData,
-                ];
-            } else {
-                return [
-                    'success' => false,
-                    'error' => $responseData['reason'] ?? 'Unknown error',
-                ];
-            }
-
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'error' => $e->getMessage(),
+            $results[] = [
+                'contact' => $contact,
+                'result' => $result
             ];
+
+            // Delay antar pengiriman untuk menghindari rate limiting
+            sleep(1);
         }
+
+        return [
+            'success' => true,
+            'results' => $results
+        ];
     }
 }
