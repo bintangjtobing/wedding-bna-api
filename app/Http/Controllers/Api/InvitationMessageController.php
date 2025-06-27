@@ -212,7 +212,7 @@ class InvitationMessageController extends Controller
 
 Kami bersyukur bisa dikelilingi orang yang berbahagia, serta turut mendoakan kebaikan kami dan untuk kebanyakan sekitar.
 
-Tuhan memberkati, dan doa baik juga kembali pada mu ya {$panggilan} {$nama} dengan sukacita dan kasih yang melimpah 💕
+Tuhan memberkati, dan doa baik juga kembali pada mu ya {$panggilan} dengan sukacita dan kasih yang melimpah 💕
 
 Salam hangat,
 {$groomName} & {$brideName}";
