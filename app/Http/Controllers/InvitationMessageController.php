@@ -21,7 +21,9 @@ class InvitationMessageController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('invitation_messages.index', compact('messages'));
+        $totalMessages = InvitationMessage::count();
+
+        return view('invitation_messages.index', compact('messages', 'totalMessages'));
     }
 
     /**

@@ -3,6 +3,9 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Daftar Ucapan dan Doa</h1>
+    <div class="badge bg-primary fs-6">
+        Total: {{ $totalMessages }} pesan
+    </div>
 </div>
 
 <div class="card">
