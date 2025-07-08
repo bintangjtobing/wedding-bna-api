@@ -21,7 +21,7 @@ class AnalyticsController extends Controller
     /**
      * Display analytics dashboard
      */
-    public function index()
+    public function index(Request $request)
     {
         $currentAdmin = Auth::guard('admin')->user();
         $contactIds = $currentAdmin->contacts()->pluck('id');
@@ -65,7 +65,7 @@ class AnalyticsController extends Controller
             })->map->count()->sortKeys(),
         ];
 
-        // Get contact-specific analytics
+        // Get contact-specific analytics with filtering and sorting
         $contactAnalytics = $currentAdmin->contacts()
             ->with('clickLogs')
             ->get()
@@ -77,8 +77,68 @@ class AnalyticsController extends Controller
                     'unique_visitors' => $contact->clickLogs->unique('ip_address')->count(),
                     'last_click' => $contact->clickLogs->max('clicked_at'),
                 ];
-            })
-            ->sortByDesc('clicks');
+            });
+
+        // Apply filters
+        if ($request->filled('name_filter')) {
+            $contactAnalytics = $contactAnalytics->filter(function ($data) use ($request) {
+                return stripos($data['contact']->name, $request->name_filter) !== false;
+            });
+        }
+
+        if ($request->filled('username_filter')) {
+            $contactAnalytics = $contactAnalytics->filter(function ($data) use ($request) {
+                return stripos($data['contact']->username, $request->username_filter) !== false;
+            });
+        }
+
+        if ($request->filled('min_clicks')) {
+            $contactAnalytics = $contactAnalytics->filter(function ($data) use ($request) {
+                return $data['clicks'] >= $request->min_clicks;
+            });
+        }
+
+        if ($request->filled('max_clicks')) {
+            $contactAnalytics = $contactAnalytics->filter(function ($data) use ($request) {
+                return $data['clicks'] <= $request->max_clicks;
+            });
+        }
+
+        if ($request->filled('min_visitors')) {
+            $contactAnalytics = $contactAnalytics->filter(function ($data) use ($request) {
+                return $data['unique_visitors'] >= $request->min_visitors;
+            });
+        }
+
+        if ($request->filled('max_visitors')) {
+            $contactAnalytics = $contactAnalytics->filter(function ($data) use ($request) {
+                return $data['unique_visitors'] <= $request->max_visitors;
+            });
+        }
+
+        // Apply sorting (default to newest first based on last_click)
+        $sortBy = $request->get('sort_by', 'last_click');
+        $sortOrder = $request->get('sort_order', 'desc');
+
+        $contactAnalytics = $contactAnalytics->sortBy(function ($data) use ($sortBy) {
+            switch ($sortBy) {
+                case 'name':
+                    return $data['contact']->name;
+                case 'username':
+                    return $data['contact']->username;
+                case 'clicks':
+                    return $data['clicks'];
+                case 'unique_visitors':
+                    return $data['unique_visitors'];
+                case 'last_click':
+                default:
+                    return $data['last_click'] ?? '1970-01-01 00:00:00';
+            }
+        });
+
+        if ($sortOrder === 'desc') {
+            $contactAnalytics = $contactAnalytics->reverse();
+        }
 
         return view('analytics.index', compact('analytics', 'contactAnalytics'));
     }

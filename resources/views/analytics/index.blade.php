@@ -138,15 +138,117 @@
     </div>
     <div class="card-body">
         @if($contactAnalytics->count() > 0)
+        <!-- Filter Form -->
+        <form method="GET" action="{{ route('analytics.index') }}" class="mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="name_filter" class="form-label">Filter by Name</label>
+                    <input type="text" class="form-control" id="name_filter" name="name_filter" 
+                           value="{{ request('name_filter') }}" placeholder="Enter name...">
+                </div>
+                <div class="col-md-3">
+                    <label for="username_filter" class="form-label">Filter by Username</label>
+                    <input type="text" class="form-control" id="username_filter" name="username_filter" 
+                           value="{{ request('username_filter') }}" placeholder="Enter username...">
+                </div>
+                <div class="col-md-2">
+                    <label for="min_clicks" class="form-label">Min Clicks</label>
+                    <input type="number" class="form-control" id="min_clicks" name="min_clicks" 
+                           value="{{ request('min_clicks') }}" placeholder="0">
+                </div>
+                <div class="col-md-2">
+                    <label for="max_clicks" class="form-label">Max Clicks</label>
+                    <input type="number" class="form-control" id="max_clicks" name="max_clicks" 
+                           value="{{ request('max_clicks') }}" placeholder="999">
+                </div>
+                <div class="col-md-2">
+                    <label for="min_visitors" class="form-label">Min Visitors</label>
+                    <input type="number" class="form-control" id="min_visitors" name="min_visitors" 
+                           value="{{ request('min_visitors') }}" placeholder="0">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-2">
+                    <label for="max_visitors" class="form-label">Max Visitors</label>
+                    <input type="number" class="form-control" id="max_visitors" name="max_visitors" 
+                           value="{{ request('max_visitors') }}" placeholder="999">
+                </div>
+                <div class="col-md-2">
+                    <label for="sort_by" class="form-label">Sort by</label>
+                    <select class="form-control" id="sort_by" name="sort_by">
+                        <option value="last_click" {{ request('sort_by', 'last_click') == 'last_click' ? 'selected' : '' }}>Last Click</option>
+                        <option value="name" {{ request('sort_by') == 'name' ? 'selected' : '' }}>Name</option>
+                        <option value="username" {{ request('sort_by') == 'username' ? 'selected' : '' }}>Username</option>
+                        <option value="clicks" {{ request('sort_by') == 'clicks' ? 'selected' : '' }}>Total Clicks</option>
+                        <option value="unique_visitors" {{ request('sort_by') == 'unique_visitors' ? 'selected' : '' }}>Unique Visitors</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="sort_order" class="form-label">Order</label>
+                    <select class="form-control" id="sort_order" name="sort_order">
+                        <option value="desc" {{ request('sort_order', 'desc') == 'desc' ? 'selected' : '' }}>Descending</option>
+                        <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Ascending</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                        <a href="{{ route('analytics.index') }}" class="btn btn-secondary">Clear Filters</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Contact</th>
-                        <th>Username</th>
-                        <th>Total Clicks</th>
-                        <th>Unique Visitors</th>
-                        <th>Last Click</th>
+                        <th>
+                            <a href="{{ route('analytics.index', array_merge(request()->all(), ['sort_by' => 'name', 'sort_order' => request('sort_by') == 'name' && request('sort_order', 'desc') == 'asc' ? 'desc' : 'asc'])) }}" 
+                               class="text-decoration-none">
+                                Contact
+                                @if(request('sort_by') == 'name')
+                                    <i class="fas fa-sort-{{ request('sort_order', 'desc') == 'asc' ? 'up' : 'down' }}"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ route('analytics.index', array_merge(request()->all(), ['sort_by' => 'username', 'sort_order' => request('sort_by') == 'username' && request('sort_order', 'desc') == 'asc' ? 'desc' : 'asc'])) }}" 
+                               class="text-decoration-none">
+                                Username
+                                @if(request('sort_by') == 'username')
+                                    <i class="fas fa-sort-{{ request('sort_order', 'desc') == 'asc' ? 'up' : 'down' }}"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ route('analytics.index', array_merge(request()->all(), ['sort_by' => 'clicks', 'sort_order' => request('sort_by') == 'clicks' && request('sort_order', 'desc') == 'asc' ? 'desc' : 'asc'])) }}" 
+                               class="text-decoration-none">
+                                Total Clicks
+                                @if(request('sort_by') == 'clicks')
+                                    <i class="fas fa-sort-{{ request('sort_order', 'desc') == 'asc' ? 'up' : 'down' }}"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ route('analytics.index', array_merge(request()->all(), ['sort_by' => 'unique_visitors', 'sort_order' => request('sort_by') == 'unique_visitors' && request('sort_order', 'desc') == 'asc' ? 'desc' : 'asc'])) }}" 
+                               class="text-decoration-none">
+                                Unique Visitors
+                                @if(request('sort_by') == 'unique_visitors')
+                                    <i class="fas fa-sort-{{ request('sort_order', 'desc') == 'asc' ? 'up' : 'down' }}"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ route('analytics.index', array_merge(request()->all(), ['sort_by' => 'last_click', 'sort_order' => request('sort_by', 'last_click') == 'last_click' && request('sort_order', 'desc') == 'asc' ? 'desc' : 'asc'])) }}" 
+                               class="text-decoration-none">
+                                Last Click
+                                @if(request('sort_by', 'last_click') == 'last_click')
+                                    <i class="fas fa-sort-{{ request('sort_order', 'desc') == 'asc' ? 'up' : 'down' }}"></i>
+                                @endif
+                            </a>
+                        </th>
                         <th>Action</th>
                     </tr>
                 </thead>
